@@ -1,0 +1,10 @@
+{
+  "require": {
+    "illuminate/database": "*",
+    "vlucas/phpdotenv": "*",
+    "guzzlehttp/guzzle": "^6.3"
+  },
+  "require-dev": {
+    "codeception/codeception": "*"
+  }
+}
