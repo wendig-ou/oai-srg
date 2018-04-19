@@ -2,6 +2,8 @@
   namespace SRG;
 
   class Repository {
+    static $safe_columns = ['url', 'modified_at', 'verified_at'];
+
     public static function by_url($url) {
       $s = \SRG::db()->prepare('SELECT * FROM repositories WHERE url LIKE ?');
       $s->execute([$url]);
@@ -21,15 +23,19 @@
     }
 
     public function update($values) {
-      $columns = [];
-      foreach($values as $k => $v) {
-        $columns[]= $k.' = ?';
+      $setters = [];
+      foreach (self::$safe_columns as $column) {
+        if (array_key_exists($column, $values)) {
+          $setters[] = $column . '=?';
+        }
       }
-      $columns = join(',', $columns);
+
+      $setters = join(',', $setters);
       $values = array_values($values);
       $values[] = $this->url;
+
       $s = \SRG::db()->prepare('
-        UPDATE repositories SET ('.$columns.') WHERE url LIKE ?
+        UPDATE repositories SET '.$setters.' WHERE url LIKE ?
       ');
       $s->execute($values);
     }

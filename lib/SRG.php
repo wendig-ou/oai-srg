@@ -19,6 +19,7 @@
   // $capsule->setAsGlobal();
   // $capsule->bootEloquent();
 
+  require 'SRG/Exception.php';
   require 'SRG/Gateway.php';
   require 'SRG/Repository.php';
 

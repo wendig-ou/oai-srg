@@ -1,6 +1,5 @@
 {
   "require": {
-    "illuminate/database": "*",
     "vlucas/phpdotenv": "*",
     "guzzlehttp/guzzle": "^6.3"
   },
