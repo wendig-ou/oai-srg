@@ -6,6 +6,9 @@
   $dotenv = new Dotenv\Dotenv(SRG_ROOT);
   $dotenv->load();
 
+  libxml_use_internal_errors(TRUE);
+  libxml_disable_entity_loader(FALSE);
+
   // use Illuminate\Database\Capsule\Manager as Capsule;
   // $capsule = new Capsule();
   // $capsule->addConnection([
@@ -22,9 +25,21 @@
   require 'SRG/Exception.php';
   require 'SRG/Gateway.php';
   require 'SRG/Repository.php';
+  require 'SRG/Util.php';
+  require 'SRG/Validator.php';
 
   class SRG {
     static $db = NULL;
+
+    public static function baseUrl() {
+      return getenv('SRG_BASE_URL');
+    }
+
+    public static function log($message) {
+      if (getenv('SRG_DEBUG')) {
+        error_log('SRG: ' . $message . "\n");
+      }
+    }
 
     public static function db() {
       if (!self::$db) {

@@ -9,7 +9,7 @@ Vagrant.configure("2") do |base|
   base.vm.network :forwarded_port, host: 3306, guest: 3306, host_ip: '127.0.0.1'
   base.vm.hostname = 'oai-srg'
   base.vm.provider :virtualbox do |vb|
-    vb.memory = 1024
+    vb.memory = 2048
     vb.cpus = 2
     vb.customize ['storagectl', :id, '--name', 'SATA Controller', '--hostiocache', 'off']
   end

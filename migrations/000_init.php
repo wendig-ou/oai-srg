@@ -4,8 +4,12 @@
     CREATE TABLE repositories (
       id int(11) AUTO_INCREMENT PRIMARY KEY,
       url varchar(255),
-      modified_at datetime,
-      verified_at datetime
+      admin_email varchar(255),
+      formats varchar(255),
+      approved boolean,
+      verified boolean,
+      errors text,
+      modified_at datetime
     )
   ');
 
