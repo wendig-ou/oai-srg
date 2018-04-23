@@ -74,29 +74,84 @@
         }
       }
 
-      // TODO: check baseUrl of response matches gateway
-      $baseUrl = self::getBaseUrl($doc);
-      if ($baseUrl != \SRG::baseUrl()) {
-        $errors[] = 'base url should be ' . \SRG::baseUrl() . ' but was ' . $baseUrl;
-      }
+      // check baseUrl of response matches gateway
+      // TODO: reenable
+      // $baseUrl = self::getBaseUrl($doc);
+      // if ($baseUrl != \SRG::baseUrl()) {
+      //   $errors[] = 'base url should be ' . \SRG::baseUrl() . ' but was ' . $baseUrl;
+      // }
 
       if (sizeof($errors)) {
         $repository->update([
           'errors' => join("\n", $errors),
-          'verified' => FALSE
+          'verified' => FALSE,
+          'verified_at' => self::to_db_date('now')
         ]);
       } else {
+        $doc = new \DOMDocument();
+        $doc->loadXML($xml);
         $data = self::extract($doc);
 
-        // TODO: continue here
         $repository->update([
           'errors' => NULL,
           'verified' => TRUE,
+          'verified_at' => self::to_db_date('now'),
           'modified_at' => self::to_db_date($lm),
-          'admin_email' => $data['admin_email']
+          'admin_email' => $data['admin_email'],
+          'identify' => $data['data']['identify'],
+          'list_metadata_formats' => $data['data']['list_metadata_formats']
         ]);
+
+        $repository->delete_records();
+        foreach ($data['data']['records'] as $record) {
+          $repository->create_record([
+            'prefix' => $record['prefix'],
+            'identifier' => $record['identifier'],
+            'modified_at' => $record['datestamp'],
+            'payload' => $record['payload']
+          ]);
+        }
       }
 
+    }
+
+    private static function extract($doc) {
+      $oai_ns = 'http://www.openarchives.org/OAI/2.0/';
+      $sr_ns = 'http://www.openarchives.org/OAI/2.0/static-repository';
+
+      $result = [
+        'repository_name' => $doc->getElementsByTagNameNS($oai_ns, 'repositoryName')->item(0)->nodeValue,
+        'admin_email' => $doc->getElementsByTagNameNS($oai_ns, 'adminEmail')->item(0)->nodeValue,
+        'earliest_datestamp' => $doc->getElementsByTagNameNS($oai_ns, 'earliestDatestamp')->item(0)->nodeValue,
+        'data' => [
+          'identify' => self::getContentsByTagNameNS($doc, $sr_ns, 'Identify'),
+          'list_metadata_formats' => self::getContentsByTagNameNS($doc, $sr_ns, 'ListMetadataFormats'),
+          'records' => []
+        ]
+      ];
+
+      $list_records_batches = $doc->getElementsByTagNameNS($sr_ns, 'ListRecords');
+      for ($i = 0; $i < $list_records_batches->length; $i++) {
+        $batch = $list_records_batches->item($i);
+        $prefix = $batch->getAttribute('metadataPrefix');
+
+        $records = $batch->getElementsByTagNameNS($oai_ns, 'record');
+        foreach ($records as $record) {
+          $result['data']['records'][] = [
+            'prefix' => $prefix,
+            'identifier' => $record->getElementsByTagNameNS($oai_ns, 'identifier')->item(0)->nodeValue,
+            'datestamp' => $record->getElementsByTagNameNS($oai_ns, 'datestamp')->item(0)->nodeValue,
+            'payload' => $record->ownerDocument->saveHTML($record)
+          ];
+        }
+      }
+
+      return $result;
+    }
+
+    private static function getContentsByTagNameNS($doc, $ns, $name) {
+      $element = $doc->getElementsByTagNameNS($ns, $name)->item(0);
+      return $element->ownerDocument->saveHTML($element);
     }
 
     private static function http() {

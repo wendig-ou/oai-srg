@@ -24,6 +24,7 @@
 
   require 'SRG/Exception.php';
   require 'SRG/Gateway.php';
+  require 'SRG/Record.php';
   require 'SRG/Repository.php';
   require 'SRG/Util.php';
   require 'SRG/Validator.php';

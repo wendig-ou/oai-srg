@@ -4,7 +4,7 @@
   class Repository {
     static $safe_columns = [
       'url', 'modified_at', 'approved', 'verified', 'errors', 'admin_email',
-      'formats'
+      'formats', 'verified_at', 'identify', 'list_metadata_formats'
     ];
 
     public static function find($url, $options = []) {
@@ -51,8 +51,9 @@
       $setters = join(',', $setters);
       $update_values[] = $this->url;
 
-      echo 'UPDATE repositories SET '.$setters.' WHERE url LIKE ?';
-      var_dump($update_values);
+      // echo 'UPDATE repositories SET '.$setters.' WHERE url LIKE ?' . "\n";
+      // var_dump($update_values) . "\n";
+
       $s = \SRG::db()->prepare('
         UPDATE repositories SET '.$setters.' WHERE url LIKE ?
       ');
@@ -64,5 +65,15 @@
       $s = \SRG::db()->prepare('DELETE FROM repositories WHERE url LIKE ?');
       $s->execute([$this->url]);
     }
+
+    public function delete_records() {
+      Record::delete_by_repository_id($this->id);
+    }
+
+    public function create_record($values) {
+      $values['repository_id'] = $this->id;
+      Record::create($values);
+    }
+
   }
 ?>

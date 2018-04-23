@@ -8,8 +8,11 @@
       formats varchar(255),
       approved boolean,
       verified boolean,
+      modified_at datetime,
+      verified_at datetime,
       errors text,
-      modified_at datetime
+      identify text,
+      list_metadata_formats text
     )
   ');
 
@@ -18,8 +21,8 @@
       id int(11) AUTO_INCREMENT PRIMARY KEY,
       repository_id int(11),
       identifier varchar(255),
-      datestamp date,
-      data text
+      modified_at date,
+      payload text
     )
   ');
 
