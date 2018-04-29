@@ -28,6 +28,7 @@ function install_php5 {
   sed -i -E "s/bind-address\s*=\s*127.0.0.1/#bind-address = 127.0.0.1/" /etc/mysql/my.cnf
   systemctl restart mysql
   SQL="${SQL} UPDATE mysql.user SET password=PASSWORD('root') WHERE user='root';"
+  SQL="${SQL} DELETE FROM mysql.user where host in ('127.0.0.1', 'oai-srg');"
   SQL="${SQL} FLUSH PRIVILEGES;"
   mysql -e "$SQL"
 
