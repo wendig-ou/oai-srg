@@ -9,21 +9,10 @@
   libxml_use_internal_errors(TRUE);
   libxml_disable_entity_loader(FALSE);
 
-  // use Illuminate\Database\Capsule\Manager as Capsule;
-  // $capsule = new Capsule();
-  // $capsule->addConnection([
-  //   'driver' => getenv('SRG_DB_DRIVER'),
-  //   'host' => getenv('SRG_DB_HOST'),
-  //   'database' => getenv('SRG_DB_DATABASE'),
-  //   'username' => getenv('SRG_DB_USERNAME'),
-  //   'password' => getenv('SRG_DB_PASSWORD'),
-  //   'charset' => getenv('SRG_DB_CHARSET')
-  // ]);
-  // $capsule->setAsGlobal();
-  // $capsule->bootEloquent();
-
   require 'SRG/Exception.php';
   require 'SRG/Gateway.php';
+  require 'SRG/Importer.php';
+  require 'SRG/Model.php';
   require 'SRG/Record.php';
   require 'SRG/Repository.php';
   require 'SRG/Util.php';
@@ -31,6 +20,7 @@
 
   class SRG {
     static $db = NULL;
+    static $http = NULL;
 
     public static function baseUrl() {
       return getenv('SRG_BASE_URL');
@@ -38,8 +28,15 @@
 
     public static function log($message) {
       if (getenv('SRG_DEBUG')) {
-        error_log('SRG: ' . $message . "\n");
+        error_log('SRG: ' . $message);
       }
+    }
+
+    public static function http() {
+      if (!self::$http) {
+        self::$http = new \GuzzleHttp\Client();
+      }
+      return self::$http;
     }
 
     public static function db() {

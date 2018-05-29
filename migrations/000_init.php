@@ -11,6 +11,7 @@
       modified_at datetime,
       verified_at datetime,
       errors text,
+      warnings text,
       identify text,
       list_metadata_formats text
     )
