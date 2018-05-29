@@ -6,6 +6,33 @@
     static $table_name = 'unknown_table';
     static $primary_key = 'id';
 
+    public static function all($options = []) {
+      Util::reverse_merge($options, ['page' => 1, 'per_page' => 100]);
+
+      $tn = static::$table_name;
+      $query = "SELECT * FROM $tn";
+      $params = [];
+
+      if ($per_page = $options['per_page']) {
+        $query .= " LIMIT ?";
+        $params[] = [$per_page, \PDO::PARAM_INT];
+      }
+
+      if ($page = $options['page']) {
+        $offset = ($options['page'] - 1) * $options['per_page'];
+        $query .= " OFFSET ?";
+        $params[] = [$offset, \PDO::PARAM_INT];
+      }
+
+      $s = \SRG::db()->prepare($query);
+      foreach ($params as $i => $param) {
+        $s->bindParam($i + 1, $param[0], $param[1]);
+      }
+      $s->execute();
+      $s->setFetchMode(\PDO::FETCH_CLASS, get_called_class());
+      return $s->fetchAll();
+    }
+
     public static function find($id, $options = []) {
       return static::find_by(static::$primary_key, $id, $options);
     }

@@ -9,15 +9,6 @@
   libxml_use_internal_errors(TRUE);
   libxml_disable_entity_loader(FALSE);
 
-  require 'SRG/Exception.php';
-  require 'SRG/Gateway.php';
-  require 'SRG/Importer.php';
-  require 'SRG/Model.php';
-  require 'SRG/Record.php';
-  require 'SRG/Repository.php';
-  require 'SRG/Util.php';
-  require 'SRG/Validator.php';
-
   class SRG {
     static $db = NULL;
     static $http = NULL;

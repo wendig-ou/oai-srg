@@ -13,12 +13,12 @@
     }
 
     public function delete_records() {
-      Record::delete_by_repository_id($this->id);
+      \SRG\Record::delete_by_repository_id($this->id);
     }
 
     public function create_record($values) {
       $values['repository_id'] = $this->id;
-      Record::create($values);
+      \SRG\Record::create($values);
     }
 
   }
