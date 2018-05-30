@@ -1,0 +1,21 @@
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/_data
+    support: tests/_support
+    envs: tests/_envs
+actor_suffix: Tester
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
+modules:
+    enabled:
+        - Db:
+            dsn: 'mysql:host=127.0.0.1;dbname=srg_test'
+            host: 127.0.0.1
+            user: root
+            password: root
+            populate: true
+            cleanup: true
+            reconnect: true
+            dump: tests/_data/dump.sql

@@ -23,13 +23,14 @@ function base {
 }
 
 function install_php5 {
-  apt-get install -y php5-cli php5-mysql
+  apt-get install -y php5-cli php5-mysql php5-curl
 
   sed -i -E "s/bind-address\s*=\s*127.0.0.1/#bind-address = 127.0.0.1/" /etc/mysql/my.cnf
   systemctl restart mysql
   SQL="${SQL} UPDATE mysql.user SET password=PASSWORD('root') WHERE user='root';"
   SQL="${SQL} DELETE FROM mysql.user where host in ('127.0.0.1', 'oai-srg');"
   SQL="${SQL} FLUSH PRIVILEGES;"
+  SQL="${SQL} CREATE DATABASE srg_test;"
   mysql -e "$SQL"
 
   cd /tmp
@@ -38,13 +39,14 @@ function install_php5 {
 }
 
 function install_php7 {
-  apt-get install -y php-cli php-mysql
+  apt-get install -y php-cli php-mysql php-curl
 
   sed -i -E "s/bind-address\s*=\s*127.0.0.1/#bind-address = 127.0.0.1/" /etc/mysql/mariadb.conf.d/50-server.cnf
   systemctl restart mariadb
   SQL="UPDATE mysql.user SET plugin='', host='%' WHERE user='root';"
   SQL="${SQL} UPDATE mysql.user SET password=PASSWORD('root') WHERE user='root';"
   SQL="${SQL} FLUSH PRIVILEGES;"
+  SQL="${SQL} CREATE DATABASE srg_test;"
   mysql -e "$SQL"
 
   cd /tmp

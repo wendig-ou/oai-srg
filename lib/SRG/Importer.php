@@ -10,7 +10,7 @@
     public function import() {
       $this->doc = new \DOMDocument();
       $this->doc->loadXML($this->xml);
-      $data = self::extract();
+      $data = static::extract();
 
       $this->repository->update([
         'admin_email' => $data['admin_email'],
@@ -30,37 +30,56 @@
     }
 
     private function extract() {
-      $oai_ns = 'http://www.openarchives.org/OAI/2.0/';
-      $sr_ns = 'http://www.openarchives.org/OAI/2.0/static-repository';
-
       $result = [
-        'repository_name' => $this->doc->getElementsByTagNameNS($oai_ns, 'repositoryName')->item(0)->nodeValue,
-        'admin_email' => $this->doc->getElementsByTagNameNS($oai_ns, 'adminEmail')->item(0)->nodeValue,
-        'earliest_datestamp' => $this->doc->getElementsByTagNameNS($oai_ns, 'earliestDatestamp')->item(0)->nodeValue,
+        'repository_name' => $this->doc->getElementsByTagNameNS(\SRG::$oai_ns, 'repositoryName')->item(0)->nodeValue,
+        'admin_email' => $this->doc->getElementsByTagNameNS(\SRG::$oai_ns, 'adminEmail')->item(0)->nodeValue,
+        'earliest_datestamp' => $this->doc->getElementsByTagNameNS(\SRG::$oai_ns, 'earliestDatestamp')->item(0)->nodeValue,
         'data' => [
-          'identify' => self::getContentsByTagNameNS($sr_ns, 'Identify'),
-          'list_metadata_formats' => self::getContentsByTagNameNS($sr_ns, 'ListMetadataFormats'),
+          'identify' => $this->getIdentify(),
+          'list_metadata_formats' => $this->getListMetadataFormats(),
           'records' => []
         ]
       ];
 
-      $list_records_batches = $this->doc->getElementsByTagNameNS($sr_ns, 'ListRecords');
+      $list_records_batches = $this->doc->getElementsByTagNameNS(\SRG::$sr_ns, 'ListRecords');
       for ($i = 0; $i < $list_records_batches->length; $i++) {
         $batch = $list_records_batches->item($i);
         $prefix = $batch->getAttribute('metadataPrefix');
 
-        $records = $batch->getElementsByTagNameNS($oai_ns, 'record');
+        $records = $batch->getElementsByTagNameNS(\SRG::$oai_ns, 'record');
         foreach ($records as $record) {
           $result['data']['records'][] = [
             'prefix' => $prefix,
-            'identifier' => $record->getElementsByTagNameNS($oai_ns, 'identifier')->item(0)->nodeValue,
-            'datestamp' => $record->getElementsByTagNameNS($oai_ns, 'datestamp')->item(0)->nodeValue,
+            'identifier' => $record->getElementsByTagNameNS(\SRG::$oai_ns, 'identifier')->item(0)->nodeValue,
+            'datestamp' => $record->getElementsByTagNameNS(\SRG::$oai_ns, 'datestamp')->item(0)->nodeValue,
             'payload' => $record->ownerDocument->saveHTML($record)
           ];
         }
       }
 
       return $result;
+    }
+
+    private function getListMetadataFormats() {
+      $result = $this->getContentsByTagNameNS(\SRG::$sr_ns, 'ListMetadataFormats');
+      return $this->removeOaiNsPrefix($result);
+    }
+
+    private function getIdentify() {
+      $result = $this->getContentsByTagNameNS(\SRG::$sr_ns, 'Identify');
+      return $this->removeOaiNsPrefix($result);
+    }
+
+    private function removeOaiNsPrefix($xml) {
+      $prefix = $this->doc->lookupPrefix(\SRG::$oai_ns);
+      if ($prefix != '') {
+        # TODO: not exactly bulletproof ... but not so bad either
+        $result = preg_replace("/<$prefix:/", '<', $xml);
+        $result = preg_replace("/<\\/$prefix:/", "</", $result);
+        return preg_replace("/ $prefix:/", ' ', $result);
+      } else {
+        return $xml;
+      }
     }
 
     private function getContentsByTagNameNS($ns, $name) {

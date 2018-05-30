@@ -27,7 +27,7 @@
     $view->addExtension(new Slim\Views\TwigExtension($container->get('router'), $basePath));
 
     return $view;
-};
+  };
 
   $app->get('/gateway/{repository:.*}', function (Request $request, Response $response, array $args) {
     $params = $request->getQueryParams();
@@ -37,14 +37,19 @@
 
     $response = $response->withHeader('Content-type', 'text/xml');
 
-    $response = $this->view->render($response, 'identify.xml', [
-      'url' => $url,
-      # TODO: this is not so good and has to be changed. The namespace prefix
-      # should be read and identified from the original repository xml and
-      # removed from the <Identify> element and its decendents for use in a 
-      # normal Identify response
-      'identify' => preg_replace('/oai:/', '', $repository->identify)
-    ]);
+    if ($params['verb'] == 'Identify') {
+      return $this->view->render($response, 'identify.xml', [
+        'url' => $url,
+        'identify' => $repository->identify
+      ]);
+    }
+
+    if ($params['verb'] == 'ListMetadataFormats') {
+      return $this->view->render($response, 'list_metadata_formats.xml', [
+        'url' => $url,
+        'list_metadata_formats' => $repository->list_metadata_formats
+      ]);
+    }
 
     // $response->getBody()->write($repository->identify);
     // $response->getBody()->write(var_export($args, true));

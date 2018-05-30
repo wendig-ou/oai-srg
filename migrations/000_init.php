@@ -27,4 +27,13 @@
     )
   ');
 
+  SRG::db()->query('
+    CREATE TABLE resumption_tokens (
+      id int(11) AUTO_INCREMENT PRIMARY KEY,
+      identifier varchar(255),
+      created_at datetime,
+      state text
+    )
+  ');
+
 ?>

@@ -1,9 +1,15 @@
 <?php 
+  if (!getenv('APP_ENV')) {
+    putenv('APP_ENV=development');
+  }
+
   require_once 'vendor/autoload.php';
 
   define('SRG_ROOT', realpath(__DIR__ . '/..'));
+  define('APP_ENV', getenv('APP_ENV'));
 
-  $dotenv = new Dotenv\Dotenv(SRG_ROOT);
+  $suffix = (APP_ENV == 'production' ? '' : '.' . APP_ENV);
+  $dotenv = new Dotenv\Dotenv(SRG_ROOT, '.env' . $suffix);
   $dotenv->load();
 
   libxml_use_internal_errors(TRUE);
@@ -12,6 +18,9 @@
   class SRG {
     static $db = NULL;
     static $http = NULL;
+
+    static $oai_ns = 'http://www.openarchives.org/OAI/2.0/';
+    static $sr_ns = 'http://www.openarchives.org/OAI/2.0/static-repository';
 
     public static function baseUrl() {
       return getenv('SRG_BASE_URL');

@@ -54,7 +54,13 @@
       }
     }
 
+    public static function before_save($values) {
+      return $values;
+    }
+
     public static function create($values) {
+      $values = static::before_save($values);
+
       $columns = [];
       $value_list = [];
       foreach (static::$safe_columns as $column) {
@@ -70,13 +76,9 @@
       $s->execute($value_list);
     }
 
-    public static function delete_by($column, $value) {
-      $tn = static::$table_name;
-      $s = \SRG::db()->prepare("DELETE FROM $tn WHERE $column = ?");
-      $s->execute([$value]);
-    }
-
     public function update($values) {
+      $values = static::before_save($values);
+
       $setters = [];
       $update_values = [];
       foreach (static::$safe_columns as $column) {
@@ -92,6 +94,12 @@
       $s = \SRG::db()->prepare("UPDATE $tn SET $setters WHERE url LIKE ?");
       // $values[0] = 1;
       $s->execute($update_values);
+    }
+
+    public static function delete_by($column, $value) {
+      $tn = static::$table_name;
+      $s = \SRG::db()->prepare("DELETE FROM $tn WHERE $column = ?");
+      $s->execute([$value]);
     }
 
     public function delete() {
