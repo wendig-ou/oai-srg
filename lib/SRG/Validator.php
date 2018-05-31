@@ -94,11 +94,7 @@
       $this->last_modified = $response->getHeaderLine('Last-Modified');
       $this->status = $response->getStatusCode();
       $this->rp = $response->getReasonPhrase();
-      $this->body = $response->getBody()->__toString();
-      error_log('----');
-      error_log('----xxxx----');
-      error_log(print_r($this->body, TRUE));
-      error_log('----');
+      $this->body = $response->getBody();
       $this->log("received {$this->status} {$this->rp}");
     }
 
