@@ -103,7 +103,7 @@
     }
 
     public function delete() {
-      $id = $this->${static::$primary_key};
+      $id = $this->{static::$primary_key};
       static::delete_by(static::$primary_key, $id);
     }
   }

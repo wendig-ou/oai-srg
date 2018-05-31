@@ -21,5 +21,10 @@
       \SRG\Record::create($values);
     }
 
+    public function delete() {
+      $this->delete_records();
+      parent::delete();
+    }
+
   }
 ?>

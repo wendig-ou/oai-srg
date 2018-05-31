@@ -70,7 +70,6 @@
     }
 
     private function has_last_modified() {
-      $this->last_modified = $this->response->getHeaderLine('Last-Modified');
       if ($this->last_modified) {
         return TRUE;
       } else {
@@ -91,10 +90,15 @@
       }
       
       $this->log("sending GET request");
-      $this->response = \SRG::http()->request('GET', $this->repository()->url, $opts);
-      $this->status = $this->response->getStatusCode();
-      $this->rp = $this->response->getReasonPhrase();
-      $this->body = $this->response->getBody();
+      $response = \SRG::http()->request('GET', $this->repository()->url, $opts);
+      $this->last_modified = $response->getHeaderLine('Last-Modified');
+      $this->status = $response->getStatusCode();
+      $this->rp = $response->getReasonPhrase();
+      $this->body = $response->getBody()->__toString();
+      error_log('----');
+      error_log('----xxxx----');
+      error_log(print_r($this->body, TRUE));
+      error_log('----');
       $this->log("received {$this->status} {$this->rp}");
     }
 
@@ -171,6 +175,13 @@
     }
 
     private function persist($values = []) {
+      if (sizeof($this->warnings)) {
+        \SRG::log('warnings: ' . join('|', $this->warnings));
+      }
+      if (sizeof($this->errors)) {
+        \SRG::log('errors: ' . join('|', $this->errors));
+      }
+
       Util::reverse_merge($values, [
         'verified_at' => Util::to_db_date('now'),
         'modified_at' => Util::to_db_date($this->last_modified),

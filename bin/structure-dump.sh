@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-source .env
+source .env.development
 
 OPTS="-d -h $SRG_DB_HOST -u $SRG_DB_USERNAME -p$SRG_DB_PASSWORD $SRG_DB_DBNAME"
 

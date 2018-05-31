@@ -3,10 +3,10 @@
     putenv('APP_ENV=development');
   }
 
-  require_once 'vendor/autoload.php';
-
   define('SRG_ROOT', realpath(__DIR__ . '/..'));
   define('APP_ENV', getenv('APP_ENV'));
+
+  require_once 'vendor/autoload.php';
 
   $suffix = (APP_ENV == 'production' ? '' : '.' . APP_ENV);
   $dotenv = new Dotenv\Dotenv(SRG_ROOT, '.env' . $suffix);
@@ -27,7 +27,7 @@
     }
 
     public static function log($message) {
-      if (getenv('SRG_DEBUG')) {
+      if (getenv('SRG_DEBUG') == 'true') {
         error_log('SRG: ' . $message);
       }
     }

@@ -23,17 +23,19 @@
 
     public static function terminate($url) {
       \SRG::log("terminating mediation for repository '$url'");
-      $repository = Repository::find($url);
+      $repository = Repository::find_by_url($url);
       $repository->delete();
     }
 
     public static function verify($url) {
-      $validator = new \SRG\Validator($url);
+      \SRG::log("verifying repository '$url'");
+      $validator = static::validator_for($url);
       return $validator->verify();
     }
 
-    public static function extract($url) {
-      $validator = new \SRG\Validator($url);
+    public static function import($url) {
+      \SRG::log("importing repository '$url'");
+      $validator = static::validator_for($url);
       if ($validator->verify()) {
         if (!$validator->not_modified()) {
           $importer = new \SRG\Importer($validator->repository(), $validator->body);
@@ -49,6 +51,10 @@
     public static function OAI_PMH_identify($url) {
       $repository = Repository::find($url);
       return $repository->identify;
+    }
+
+    public static function validator_for($url) {
+      return new \SRG\Validator($url);
     }
   }
 ?>
