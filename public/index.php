@@ -1,17 +1,29 @@
 <?php 
+  # To help the built-in PHP dev server, check if the request was actually for
+  # something which should probably be served as a static file
+  if (PHP_SAPI == 'cli-server') {
+    $url  = parse_url($_SERVER['REQUEST_URI']);
+    $file = __DIR__ . $url['path'];
+    if (is_file($file)) {
+        return false;
+    }
+  }
+
   # dirty fix, see https://github.com/slimphp/Slim/issues/359
   $_SERVER['SCRIPT_NAME'] = '/index.php';
 
-  use \Psr\Http\Message\ServerRequestInterface as Request;
-  use \Psr\Http\Message\ResponseInterface as Response;
+  // use \Psr\Http\Message\ServerRequestInterface as Request;
+  // use \Psr\Http\Message\ResponseInterface as Response;
 
   require 'vendor/autoload.php';
   require 'lib/SRG.php';
 
   $app = new \Slim\App([
     'settings' => [
+      'debug' => getenv('SRG_DEBUG') == 'true',
       'displayErrorDetails' => getenv('SRG_DEBUG') == 'true',
-      'addContentLengthHeader' => TRUE
+      'addContentLengthHeader' => TRUE,
+      'determineRouteBeforeAppMiddleware' => TRUE
     ]
   ]);
 
@@ -19,7 +31,8 @@
 
   $container['view'] = function ($container) {
     $view = new \Slim\Views\Twig('templates', [
-      'cache' => false
+      'cache' => FALSE,
+      'strict_variables' => TRUE
     ]);
 
     // Instantiate and add Slim specific extension
@@ -29,7 +42,20 @@
     return $view;
   };
 
-  $app->get('/gateway/{repository:.*}', function (Request $request, Response $response, array $args) {
+  # request logging
+  $app->add(function ($req, $res, $next) {
+    $method = $req->getMethod();
+    $path = $req->getRequestTarget();
+    error_log("$method: $path");
+    $res = $next($req, $res);
+    return $res;
+  });
+
+  # routes
+  $app->get('/', '\SRG\Web:index');
+  $app->get('/gateway', '\SRG\Web:gateway');
+
+  $app->get('/oai/{repository:.*}', function (Request $request, Response $response, array $args) {
     $params = $request->getQueryParams();
     $url = \SRG\Util::build_url($args['repository']);
 
@@ -65,16 +91,12 @@
   //   return $response;
   // });
 
-  $app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
-      $name = $args['name'];
-      $response->getBody()->write("Hello, $name");
+  // $app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
+  //     $name = $args['name'];
+  //     $response->getBody()->write("Hello, $name");
 
-      return $response;
-  });
+  //     return $response;
+  // });
 
   $app->run();
-
-  // foreach (\SRG\Repository::all() as $repository) {
-  //   echo $repository->url . '<br />';
-  // }
 ?>

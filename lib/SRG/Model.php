@@ -106,6 +106,10 @@
       $id = $this->{static::$primary_key};
       static::delete_by(static::$primary_key, $id);
     }
+
+    public function for_template() {
+      return $this;
+    }
   }
 
 ?>

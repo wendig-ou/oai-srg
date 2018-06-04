@@ -4,6 +4,13 @@
   class Gateway {
     static $http = null;
 
+    public static function all($page = 1) {
+      return Repository::all([
+        'per_page' => 100,
+        'page' => $page
+      ]);
+    }
+
     public static function initiate($url) {
       \SRG::log("initiating mediation for repository '$url'");
       if ($repository = Repository::find_by_url($url, ['strict' => FALSE])) {

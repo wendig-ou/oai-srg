@@ -1,0 +1,7 @@
+/*table td {
+  vertical-align: top;
+}*/
+
+table.repositories th:nth-child(1) {
+  width: 650px;
+}

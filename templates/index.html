@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Repositories{% endblock %}
+
+{% block buttons %}
+  <a class="btn btn-outline-primary" href="admin/add"><i class="fa fa-plus"></i></a>
+{% endblock %}
+
+{% block content %}
+  <table class="repositories table table-bordered table-striped">
+    <tr>
+      <th>Url</th>
+      <th>
+        Status<br />
+        <small>approved / verified</small>
+      </th>
+      <th class="text-right"></th>
+    </tr>
+    {% for repository in repositories %}
+      <tr>
+        <td>
+          {% if repository.ready() %}
+            <small class="d-block float-right">
+              <a
+                data-toggle="collapse"
+                href="#usage-{{repository.id}}"
+                aria-expanded="false"
+                aria-controls="usage-{{repository.id}}"
+              >show examples</a>
+            </small>
+          {% endif %}
+          {% if not repository.verified %}
+            <small class="d-block float-right">
+              <a
+                data-toggle="collapse"
+                href="#verification-results-{{repository.id}}"
+                aria-expanded="false"
+                aria-controls="verification-results-{{repository.id}}"
+              >verification results</a>
+            </small>
+          {% endif %}
+
+          <div class="text-weight-light">
+            {{repository.url}}
+          </div>
+          <small class="clear d-block">
+            {{repository.record_count()}} records,
+            last modification: {{repository.modified_at}}
+          </small>
+
+          <div class="collapse" id="verification-results-{{repository.id}}">
+            <hr />
+
+            {% if repository.error_list | length > 0 %}
+              <small class="d-block">
+                Errors<br />
+                  {% for error in repository.error_list %}
+                    <code>{{error}}</code><br />
+                  {% endfor %}
+                </ul>
+              </small>
+            {% endif %}
+
+            {% if repository.warning_list | length > 0 %}
+              <small class="d-block">
+                Warnings<br />
+                <ul>
+                  {% for warning in repository.warning_list %}
+                    <li>{{warning}}</li>
+                  {% endfor %}
+                </ul>
+              </small>
+            {% endif %}
+          </div>
+
+          <div class="collapse" id="usage-{{repository.id}}">
+            <hr />
+
+            <small class="d-block">
+              OAI PMH <em>Identify</em><br />
+              <code>GET {{base_url}}/gateway/{{repository.url | reposify}}?verb=Identify</code>
+            </small>
+
+            <small class="d-block">
+              OAI PMH <em>List metadata formats</em><br />
+              <code>GET {{base_url}}/gateway/{{repository.url | reposify}}?verb=ListMetadataFormats</code>
+            </small>
+
+            <small class="d-block">
+              OAI PMH <em>List identifiers</em><br />
+              <code>GET {{base_url}}/gateway/{{repository.url | reposify}}?verb=ListIdentifiers</code>
+            </small>
+
+            <small class="d-block">
+              OAI PMH <em>List records</em><br />
+              <code>GET {{base_url}}/gateway/{{repository.url | reposify}}?verb=ListRecords</code>
+            </small>
+
+            <small class="d-block">
+              OAI PMH <em>Get record</em><br />
+              <code>GET {{base_url}}/gateway/{{repository.url | reposify}}?verb=GetRecord</code>
+            </small>
+          </div>
+        </td>
+        <td>
+          {% if repository.approved %}
+            <i class="fa fa-check text-success"></i>
+          {% else %}
+            <i class="fa fa-times-circle text-danger"></i>
+          {% endif %}
+          /
+          {% if repository.verified %}
+            <i class="fa fa-check text-success"></i>
+          {% else %}
+            <i class="fa fa-times-circle text-danger"></i>
+          {% endif %}
+
+          {% if repository.verified_at %}
+            <small class="d-block">
+              verified at <strong>{{repository.verified_at}}</strong>
+            </small>
+          {% endif %}
+        </td>
+        <td class="text-right">
+          <div class="btn-group">
+            {% if not repository.approved %}
+              <a class="btn btn-outline-primary btn-sm" href="gateway?approve={{repository.url}}">
+                <i class="fa fa-thumbs-up"></i> approve
+              </a>
+            {% endif %}
+            <a class="btn btn-outline-primary btn-sm" href="gateway?verify={{repository.url}}">
+              <i class="fa fa-check"></i> verify
+            </a>
+            <a class="btn btn-outline-primary btn-sm" href="gateway?terminate={{repository.url}}">
+              <i class="fa fa-minus-circle"></i> terminate
+            </a>
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endblock %}

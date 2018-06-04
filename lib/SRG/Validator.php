@@ -16,20 +16,21 @@
       $this->log("verifying");
 
       if ($this->exists_in_db()) {
-        $this->fetch();
+        if ($this->fetch()) {
 
-        if ($this->not_modified()) {
-          $this->persist(['verified' => TRUE]);
-          return TRUE;
-        }
+          if ($this->not_modified()) {
+            $this->persist(['verified' => TRUE]);
+            return TRUE;
+          }
 
-        if ($this->ok()) {
-          $this->has_last_modified();
+          if ($this->ok()) {
+            $this->has_last_modified();
 
-          if ($this->base_url_matches()) {
-            if ($this->satisfies_schema()) {
-              $this->persist(['verified' => TRUE]);
-              return TRUE;
+            if ($this->base_url_matches()) {
+              if ($this->satisfies_schema()) {
+                $this->persist(['verified' => TRUE]);
+                return TRUE;
+              }
             }
           }
         }
@@ -80,6 +81,7 @@
 
     private function fetch() {
       $opts = [
+        'http_errors' => FALSE,
         'allow_redirects' => ['max' => 10]
       ];
 
@@ -96,6 +98,13 @@
       $this->rp = $response->getReasonPhrase();
       $this->body = $response->getBody();
       $this->log("received {$this->status} {$this->rp}");
+
+      if ($this->status < 200 || $this->status > 399) {
+        $this->errors[] = "received {$this->status} {$this->rp}";
+        return FALSE;
+      } else {
+        return TRUE;
+      }
     }
 
     private function doc() {
@@ -121,8 +130,9 @@
       if (getenv('SRG_REQUIRE_BASE_URL') == 'true') {
         $ns = 'http://www.openarchives.org/OAI/2.0/';
         $baseUrl = $this->doc()->getElementsByTagNameNS($ns, 'baseURL')->item(0)->textContent;
-        if ($baseUrl != \Srg::baseUrl()) {
-          $this->errors[] = 'base url should be ' . \SRG::baseUrl() . ' but was ' . $baseUrl;
+        $expectedBaseUrl = \SRG::baseUrl() . '/gateway';
+        if ($baseUrl != $expectedBaseUrl) {
+          $this->errors[] = 'base url should be ' . $expectedBaseUrl . ' but was ' . $baseUrl;
           return FALSE;
         }
       }
@@ -181,8 +191,8 @@
       Util::reverse_merge($values, [
         'verified_at' => Util::to_db_date('now'),
         'modified_at' => Util::to_db_date($this->last_modified),
-        'errors' => join("\n", $this->errors),
-        'warnings' => join("\n", $this->warnings)
+        'errors' => join("|", $this->errors),
+        'warnings' => join("|", $this->warnings)
       ]);
 
       $this->repository()->update($values);
