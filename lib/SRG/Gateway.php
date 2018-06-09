@@ -11,6 +11,14 @@
       ]);
     }
 
+    public static function published($page = 1) {
+      return Repository::all([
+        'where' => 'verified = 1 AND approved = 1',
+        'per_page' => 100,
+        'page' => $page
+      ]);
+    }
+
     public static function initiate($url) {
       \SRG::log("initiating mediation for repository '$url'");
       if ($repository = Repository::find_by_url($url, ['strict' => FALSE])) {

@@ -1,10 +1,11 @@
 <?php 
   if (!getenv('APP_ENV')) {
-    putenv('APP_ENV=development');
+    define('APP_ENV', 'production');
+  } else {
+    define('APP_ENV', getenv('APP_ENV'));
   }
 
   define('SRG_ROOT', realpath(__DIR__ . '/..'));
-  define('APP_ENV', getenv('APP_ENV'));
 
   require_once 'vendor/autoload.php';
 
@@ -18,6 +19,7 @@
   class SRG {
     static $db = NULL;
     static $http = NULL;
+    static $auth = NULL;
 
     static $oai_ns = 'http://www.openarchives.org/OAI/2.0/';
     static $sr_ns = 'http://www.openarchives.org/OAI/2.0/static-repository';
@@ -112,6 +114,13 @@
         }
       }
     }
-  }
 
+    public static function auth() {
+      if (!static::$auth) {
+        static::$auth = new \SRG\Auth();
+      }
+
+      return static::$auth;
+    }
+  }
 ?>

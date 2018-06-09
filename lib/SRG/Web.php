@@ -7,8 +7,21 @@
       $this->extend();
     }
 
+    public function login($req, $res, $args) {
+      if (\SRG::auth()->login()) {
+        return $res->withRedirect('/', 302);
+      } else {
+        return $this->container->view->render($res, 'login_failed.html');
+      }
+    }
+
     public function index($req, $res, $args) {
-      $repositories = Gateway::all();
+      if (\SRG::auth()->logged_in()) {
+        $repositories = Gateway::all();
+      } else {
+        $repositories = Gateway::published();
+      }
+      
 
       return $this->container->view->render($res, 'index.html', [
         'repositories' => $repositories
@@ -37,6 +50,10 @@
       return $res->withRedirect('/', 302);
     }
 
+    public function form($req, $res, $args) {
+      return $this->container->view->render($res, 'admin/form.html');
+    }
+
     public function oai_pmh($req, $res, $args) {
 
     }
@@ -52,9 +69,9 @@
     }
 
     protected function extend() {
-      $this->container->view->getEnvironment()->addGlobal(
-        'base_url', getenv('SRG_BASE_URL')
-      );
+      $twig_env = $this->container->view->getEnvironment();
+      $twig_env->addGlobal('base_url', getenv('SRG_BASE_URL'));
+      $twig_env->addGlobal('user', \SRG::auth()->user());
 
       $filter = new \Twig_SimpleFilter('reposify', function ($string) {
         $parts = parse_url($string);

@@ -94,6 +94,9 @@
       $this->log("sending GET request");
       $response = \SRG::http()->request('GET', $this->repository()->url, $opts);
       $this->last_modified = $response->getHeaderLine('Last-Modified');
+      if (!$this->last_modified) {
+        $this->last_modified = Util::to_http_date($this->repository()->modified_at);
+      }
       $this->status = $response->getStatusCode();
       $this->rp = $response->getReasonPhrase();
       $this->body = $response->getBody();

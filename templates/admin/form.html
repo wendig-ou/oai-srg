@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Repository{% endblock %}
+
+{% block content %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <form action="{{base_url}}/gateway">
+          <p>
+            Enter the url of the new repository below. After submitting, the
+            repository will appear in the list as unapproved. This simulates
+            the
+            <a
+              href="http://www.openarchives.org/OAI/2.0/guidelines-static-repository.htm#SR_initiating"
+              target="_blank"
+              rel="noopener"
+            >Static Repository Gateway "initiate" action</a>.
+          </p>
+
+          <hr />
+
+          <div class="form-group">
+            <label>
+              Url
+              <input class="form-control" type="text" name="initiate" />
+            </label>
+          </div>
+          
+          <button type="submit" class="btn btn-primary mb-2">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

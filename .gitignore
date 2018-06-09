@@ -2,3 +2,4 @@ vendor/*
 .vagrant
 tmp/*
 tests/_output
+.env

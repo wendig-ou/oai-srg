@@ -3,10 +3,18 @@
 {% block title %}Repositories{% endblock %}
 
 {% block buttons %}
-  <a class="btn btn-outline-primary" href="admin/add"><i class="fa fa-plus"></i></a>
+  <a class="btn btn-outline-primary" href="gateway/new"><i class="fa fa-plus"></i></a>
 {% endblock %}
 
 {% block content %}
+  <p class="lead mb-4 pr-5">
+    These are all repositories available for mediation by this gateway.
+    Click on <strong>show examples</strong> on the respective row to reveal some
+    requests that you could make about that particular repository. Request
+    mediation for a <strong>new repository</strong> by clicking on the plus sign
+    on the right.
+  </p>
+
   <table class="repositories table table-bordered table-striped">
     <tr>
       <th>Url</th>
@@ -14,7 +22,9 @@
         Status<br />
         <small>approved / verified</small>
       </th>
-      <th class="text-right"></th>
+      {% if user %}
+        <th class="text-right"></th>
+      {% endif %}
     </tr>
     {% for repository in repositories %}
       <tr>
@@ -29,7 +39,7 @@
               >show examples</a>
             </small>
           {% endif %}
-          {% if not repository.verified %}
+          {% if not repository.verified and repository.verified_at %}
             <small class="d-block float-right">
               <a
                 data-toggle="collapse"
@@ -43,10 +53,12 @@
           <div class="text-weight-light">
             {{repository.url}}
           </div>
-          <small class="clear d-block">
-            {{repository.record_count()}} records,
-            last modification: {{repository.modified_at}}
-          </small>
+          {% if repository.verified %}
+            <small class="clear d-block">
+              <strong>{{repository.record_count()}}</strong> records,
+              last modified at: <strong>{{repository.modified_at}}</strong>
+            </small>
+          {% endif %}
 
           <div class="collapse" id="verification-results-{{repository.id}}">
             <hr />
@@ -78,27 +90,27 @@
 
             <small class="d-block">
               OAI PMH <em>Identify</em><br />
-              <code>GET {{base_url}}/gateway/{{repository.url | reposify}}?verb=Identify</code>
+              <code>GET {{base_url}}/oai/{{repository.url | reposify}}?verb=Identify</code>
             </small>
 
             <small class="d-block">
               OAI PMH <em>List metadata formats</em><br />
-              <code>GET {{base_url}}/gateway/{{repository.url | reposify}}?verb=ListMetadataFormats</code>
+              <code>GET {{base_url}}/oai/{{repository.url | reposify}}?verb=ListMetadataFormats</code>
             </small>
 
             <small class="d-block">
               OAI PMH <em>List identifiers</em><br />
-              <code>GET {{base_url}}/gateway/{{repository.url | reposify}}?verb=ListIdentifiers</code>
+              <code>GET {{base_url}}/oai/{{repository.url | reposify}}?verb=ListIdentifiers</code>
             </small>
 
             <small class="d-block">
               OAI PMH <em>List records</em><br />
-              <code>GET {{base_url}}/gateway/{{repository.url | reposify}}?verb=ListRecords</code>
+              <code>GET {{base_url}}/oai/{{repository.url | reposify}}?verb=ListRecords?metadataPrefix=dc</code>
             </small>
 
             <small class="d-block">
               OAI PMH <em>Get record</em><br />
-              <code>GET {{base_url}}/gateway/{{repository.url | reposify}}?verb=GetRecord</code>
+              <code>GET {{base_url}}/oai/{{repository.url | reposify}}?verb=GetRecord?metadataPrefix=dc</code>
             </small>
           </div>
         </td>
@@ -121,21 +133,23 @@
             </small>
           {% endif %}
         </td>
-        <td class="text-right">
-          <div class="btn-group">
-            {% if not repository.approved %}
-              <a class="btn btn-outline-primary btn-sm" href="gateway?approve={{repository.url}}">
-                <i class="fa fa-thumbs-up"></i> approve
+        {% if user %}
+          <td class="text-right">
+            <div class="btn-group">
+              {% if not repository.approved %}
+                <a class="btn btn-outline-primary btn-sm" href="gateway?approve={{repository.url}}">
+                  <i class="fa fa-thumbs-up"></i> approve
+                </a>
+              {% endif %}
+              <a class="btn btn-outline-primary btn-sm" href="gateway?verify={{repository.url}}">
+                <i class="fa fa-check"></i> verify
               </a>
-            {% endif %}
-            <a class="btn btn-outline-primary btn-sm" href="gateway?verify={{repository.url}}">
-              <i class="fa fa-check"></i> verify
-            </a>
-            <a class="btn btn-outline-primary btn-sm" href="gateway?terminate={{repository.url}}">
-              <i class="fa fa-minus-circle"></i> terminate
-            </a>
-          </div>
-        </td>
+              <a class="btn btn-outline-primary btn-sm" href="gateway?terminate={{repository.url}}">
+                <i class="fa fa-minus-circle"></i> terminate
+              </a>
+            </div>
+          </td>
+        {% endif %}
       </tr>
     {% endfor %}
   </table>

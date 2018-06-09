@@ -13,6 +13,10 @@
       $query = "SELECT * FROM $tn";
       $params = [];
 
+      if (isset($options['where'])) {
+        $query .= ' WHERE ' . $options['where'];
+      }
+
       if ($per_page = $options['per_page']) {
         $query .= " LIMIT ?";
         $params[] = [$per_page, \PDO::PARAM_INT];
@@ -24,6 +28,7 @@
         $params[] = [$offset, \PDO::PARAM_INT];
       }
 
+      \SRG::log('SQL: ' . $query);
       $s = \SRG::db()->prepare($query);
       foreach ($params as $i => $param) {
         $s->bindParam($i + 1, $param[0], $param[1]);

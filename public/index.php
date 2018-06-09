@@ -12,11 +12,11 @@
   # dirty fix, see https://github.com/slimphp/Slim/issues/359
   $_SERVER['SCRIPT_NAME'] = '/index.php';
 
-  // use \Psr\Http\Message\ServerRequestInterface as Request;
-  // use \Psr\Http\Message\ResponseInterface as Response;
-
   require 'vendor/autoload.php';
   require 'lib/SRG.php';
+
+  // phpinfo();
+  // return false;
 
   $app = new \Slim\App([
     'settings' => [
@@ -46,15 +46,19 @@
   $app->add(function ($req, $res, $next) {
     $method = $req->getMethod();
     $path = $req->getRequestTarget();
-    error_log("$method: $path");
+    \SRG::log("$method: $path");
     $res = $next($req, $res);
     return $res;
   });
 
   # routes
   $app->get('/', '\SRG\Web:index');
+  $app->get('/login', '\SRG\Web:login');
   $app->get('/gateway', '\SRG\Web:gateway');
+  $app->get('/gateway/new', '\SRG\Web:form');
 
+  use \Psr\Http\Message\ServerRequestInterface as Request;
+  use \Psr\Http\Message\ResponseInterface as Response;
   $app->get('/oai/{repository:.*}', function (Request $request, Response $response, array $args) {
     $params = $request->getQueryParams();
     $url = \SRG\Util::build_url($args['repository']);
