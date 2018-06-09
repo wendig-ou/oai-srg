@@ -54,6 +54,7 @@
   # routes
   $app->get('/', '\SRG\Web:index');
   $app->get('/login', '\SRG\Web:login');
+  $app->get('/logout', '\SRG\Web:logout');
   $app->get('/gateway', '\SRG\Web:gateway');
   $app->get('/gateway/new', '\SRG\Web:form');
 

@@ -15,6 +15,11 @@
       }
     }
 
+    public function logout($req, $res, $args) {
+      \SRG::auth()->logout();
+      return $res->withRedirect('/', 302);
+    }
+
     public function index($req, $res, $args) {
       if (\SRG::auth()->logged_in()) {
         $repositories = Gateway::all();
