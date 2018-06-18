@@ -5,7 +5,10 @@
 {% block content %}
   <h3 class="display-3 mb-3 mt-5">
     <div class="float-right">
-      <a class="btn btn-outline-primary" href="gateway/new"><i class="fa fa-plus"></i></a>
+      <a
+        class="btn btn-outline-primary"
+        href="{{base_url}}gateway/new"
+      ><i class="fa fa-plus"></i></a>
     </div>
     {{ block('title') }}
   </h3>
