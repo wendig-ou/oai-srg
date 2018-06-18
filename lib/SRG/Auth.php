@@ -12,10 +12,17 @@
         $_SESSION['user'] = $user;
         \SRG::log("logged in user '$user' via REMOTE_USER server variable");
         return TRUE;
-      } else {
-        session_destroy();
-        return FALSE;
       }
+
+      if (isset($_SERVER['REDIRECT_REMOTE_USER'])) {
+        $user = $_SERVER['REDIRECT_REMOTE_USER'];
+        $_SESSION['user'] = $user;
+        \SRG::log("logged in user '$user' via REDIRECT_REMOTE_USER server variable");
+        return TRUE;
+      }
+      
+      session_destroy();
+      return FALSE;
     }
 
     public function logout() {
