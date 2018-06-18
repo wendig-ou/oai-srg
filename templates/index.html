@@ -2,11 +2,14 @@
 
 {% block title %}Repositories{% endblock %}
 
-{% block buttons %}
-  <a class="btn btn-outline-primary" href="gateway/new"><i class="fa fa-plus"></i></a>
-{% endblock %}
-
 {% block content %}
+  <h3 class="display-3 mb-3 mt-5">
+    <div class="float-right">
+      <a class="btn btn-outline-primary" href="gateway/new"><i class="fa fa-plus"></i></a>
+    </div>
+    {{ block('title') }}
+  </h3>
+
   <p class="lead mb-4 pr-5">
     These are all repositories available for mediation by this gateway.
     Click on <strong>show examples</strong> on the respective row to reveal some

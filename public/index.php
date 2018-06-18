@@ -12,8 +12,8 @@
   # dirty fix, see https://github.com/slimphp/Slim/issues/359
   $_SERVER['SCRIPT_NAME'] = '/index.php';
 
-  require 'vendor/autoload.php';
-  require 'lib/SRG.php';
+  require __DIR__ . '/../vendor/autoload.php';
+  require __DIR__ . '/../lib/SRG.php';
 
   // phpinfo();
   // return false;
@@ -29,20 +29,19 @@
 
   $container = $app->getContainer();
 
+  # twig view
   $container['view'] = function ($container) {
     $view = new \Slim\Views\Twig('templates', [
       'cache' => FALSE,
       'strict_variables' => TRUE
     ]);
-
     // Instantiate and add Slim specific extension
     $basePath = rtrim(str_ireplace('index.php', '', $container->get('request')->getUri()->getBasePath()), '/');
     $view->addExtension(new Slim\Views\TwigExtension($container->get('router'), $basePath));
-
     return $view;
   };
 
-  # request logging
+  # request logging middleware
   $app->add(function ($req, $res, $next) {
     $method = $req->getMethod();
     $path = $req->getRequestTarget();
@@ -55,9 +54,12 @@
   $app->get('/', '\SRG\Web:index');
   $app->get('/login', '\SRG\Web:login');
   $app->get('/logout', '\SRG\Web:logout');
-  $app->get('/gateway', '\SRG\Web:gateway');
   $app->get('/gateway/new', '\SRG\Web:form');
 
+  # the gateway routes (initiate, approve, terminate, validate)
+  $app->get('/gateway', '\SRG\Web:gateway');
+
+  # the oai pmh routes (Identify, ListRecords etc)
   use \Psr\Http\Message\ServerRequestInterface as Request;
   use \Psr\Http\Message\ResponseInterface as Response;
   $app->get('/oai/{repository:.*}', function (Request $request, Response $response, array $args) {
@@ -90,18 +92,8 @@
     return $response;
   });
 
-  // $app->get('/', function (Request $request, Response $response, array $args) {
-  //   $repositories = \SRG\Repository::all();
-  //   $response->getBody()->write(var_export($repositories, true));
-  //   return $response;
-  // });
-
-  // $app->get('/hello/{name}', function (Request $request, Response $response, array $args) {
-  //     $name = $args['name'];
-  //     $response->getBody()->write("Hello, $name");
-
-  //     return $response;
-  // });
-
   $app->run();
+
+  # TODO: catch guzzle no resolve errors
+  # TODO: implement friends
 ?>
