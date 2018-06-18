@@ -7,7 +7,6 @@
 
   define('SRG_ROOT', realpath(__DIR__ . '/..'));
 
-
   require_once SRG_ROOT . '/vendor/autoload.php';
 
   $suffix = (APP_ENV == 'production' ? '' : '.' . APP_ENV);

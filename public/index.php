@@ -31,7 +31,7 @@
 
   # twig view
   $container['view'] = function ($container) {
-    $view = new \Slim\Views\Twig('templates', [
+    $view = new \Slim\Views\Twig(SRG_ROOT + '/templates', [
       'cache' => FALSE,
       'strict_variables' => TRUE
     ]);
