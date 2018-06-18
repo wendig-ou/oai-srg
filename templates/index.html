@@ -143,14 +143,14 @@
           <td class="text-right">
             <div class="btn-group">
               {% if not repository.approved %}
-                <a class="btn btn-outline-primary btn-sm" href="gateway?approve={{repository.url}}">
+                <a class="btn btn-outline-primary btn-sm" href="{{base_url}}/gateway?approve={{repository.url}}">
                   <i class="fa fa-thumbs-up"></i> approve
                 </a>
               {% endif %}
-              <a class="btn btn-outline-primary btn-sm" href="gateway?verify={{repository.url}}">
+              <a class="btn btn-outline-primary btn-sm" href="{{base_url}}/gateway?verify={{repository.url}}">
                 <i class="fa fa-check"></i> verify
               </a>
-              <a class="btn btn-outline-primary btn-sm" href="gateway?terminate={{repository.url}}">
+              <a class="btn btn-outline-primary btn-sm" href="{{base_url}}/gateway?terminate={{repository.url}}">
                 <i class="fa fa-minus-circle"></i> terminate
               </a>
             </div>
