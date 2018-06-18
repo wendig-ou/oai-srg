@@ -9,7 +9,7 @@
 
     public function login($req, $res, $args) {
       if (\SRG::auth()->login()) {
-        return $res->withRedirect('/', 302);
+        return $res->withRedirect(getenv('SRG_BASE_URL'), 302);
       } else {
         return $this->container->view->render($res, 'login_failed.html');
       }
@@ -17,7 +17,7 @@
 
     public function logout($req, $res, $args) {
       \SRG::auth()->logout();
-      return $res->withRedirect('/', 302);
+      return $res->withRedirect(getenv('SRG_BASE_URL'), 302);
     }
 
     public function index($req, $res, $args) {
@@ -52,7 +52,7 @@
         Gateway::terminate($params['terminate']);
       }
 
-      return $res->withRedirect('/', 302);
+      return $res->withRedirect(getenv('SRG_BASE_URL'), 302);
     }
 
     public function form($req, $res, $args) {

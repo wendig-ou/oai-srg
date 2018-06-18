@@ -1,3 +1,10 @@
+## Production (how to use)
+
+* checkout the repo
+* make the target your WebServer's DocumentRoot
+* run `composer install --no-dev`
+* run `composer dump-autoload`
+
 ## Development
 
 To get started developing, first install VirtualBox and Vagrant and git. Then
