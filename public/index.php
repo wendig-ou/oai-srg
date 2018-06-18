@@ -7,10 +7,11 @@
     if (is_file($file)) {
         return false;
     }
+
+    # dirty fix, see https://github.com/slimphp/Slim/issues/359
+    $_SERVER['SCRIPT_NAME'] = '/index.php';
   }
 
-  # dirty fix, see https://github.com/slimphp/Slim/issues/359
-  $_SERVER['SCRIPT_NAME'] = '/index.php';
 
   require __DIR__ . '/../vendor/autoload.php';
   require __DIR__ . '/../lib/SRG.php';
@@ -26,6 +27,8 @@
       'determineRouteBeforeAppMiddleware' => TRUE
     ]
   ]);
+
+  $_SERVER['SCRIPT_NAME'] = $app->getContainer()->get('settings')['scriptURI'];
 
   $container = $app->getContainer();
 
