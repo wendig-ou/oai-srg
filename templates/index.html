@@ -96,27 +96,27 @@
 
             <small class="d-block">
               OAI PMH <em>Identify</em><br />
-              <code>GET {{base_url}}/oai/{{repository.url | reposify}}?verb=Identify</code>
+              <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=Identify</code>
             </small>
 
             <small class="d-block">
               OAI PMH <em>List metadata formats</em><br />
-              <code>GET {{base_url}}/oai/{{repository.url | reposify}}?verb=ListMetadataFormats</code>
+              <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListMetadataFormats</code>
             </small>
 
             <small class="d-block">
               OAI PMH <em>List identifiers</em><br />
-              <code>GET {{base_url}}/oai/{{repository.url | reposify}}?verb=ListIdentifiers</code>
+              <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListIdentifiers</code>
             </small>
 
             <small class="d-block">
               OAI PMH <em>List records</em><br />
-              <code>GET {{base_url}}/oai/{{repository.url | reposify}}?verb=ListRecords?metadataPrefix=dc</code>
+              <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListRecords?metadataPrefix=dc</code>
             </small>
 
             <small class="d-block">
               OAI PMH <em>Get record</em><br />
-              <code>GET {{base_url}}/oai/{{repository.url | reposify}}?verb=GetRecord?metadataPrefix=dc</code>
+              <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=GetRecord?metadataPrefix=dc</code>
             </small>
           </div>
         </td>
@@ -147,8 +147,8 @@
                   <i class="fa fa-thumbs-up"></i> approve
                 </a>
               {% endif %}
-              <a class="btn btn-outline-primary btn-sm" href="{{base_url}}/gateway?verify={{repository.url}}">
-                <i class="fa fa-check"></i> verify
+              <a class="btn btn-outline-primary btn-sm" href="{{base_url}}/gateway?import={{repository.url}}">
+                <i class="fa fa-arrow-alt-circle-down"></i> import
               </a>
               <a class="btn btn-outline-primary btn-sm" href="{{base_url}}/gateway?terminate={{repository.url}}">
                 <i class="fa fa-minus-circle"></i> terminate

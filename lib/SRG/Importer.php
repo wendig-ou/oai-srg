@@ -15,7 +15,8 @@
       $this->repository->update([
         'admin_email' => $data['admin_email'],
         'identify' => $data['data']['identify'],
-        'list_metadata_formats' => $data['data']['list_metadata_formats']
+        'list_metadata_formats' => $data['data']['list_metadata_formats'],
+        'imported_at' => Util::to_db_date('now')
       ]);
 
       $this->repository->delete_records();

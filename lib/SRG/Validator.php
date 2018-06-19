@@ -61,6 +61,10 @@
       return $result;
     }
 
+    public function modified() {
+      return !$this->not_modified();
+    }
+
     private function ok() {
       if ($this->status == 200) {
         return TRUE;
@@ -85,7 +89,7 @@
         'allow_redirects' => ['max' => 10]
       ];
 
-      if ($this->repository()->modified_at) {
+      if ($this->repository()->modified_at && !$this->repository()->never_imported()) {
         $opts['headers'] = [
           'If-Modified-Since' => Util::to_http_date($this->repository()->modified_at)
         ];

@@ -22,16 +22,20 @@
     }
 
     public static function build_url($uri) {
-      $components = parse_url($uri);
+      if (preg_match('/^([^\/]+)(:\d+)?(.*)$/', $uri, $matches)) {
+        $host = $matches[1];
+        $port = ($matches[2] ? preg_replace('/^:/', $matches[2]) : '80');
+        $path = $matches[3];
 
-      if ($components['port'] == 443) {
-        return "https://{$components['host']}{$components['path']}";
-      }
+        if ($port == '443') {
+          return "https://$host$path";
+        }
 
-      if ($components['port'] == 80) {
-        return "http://{$components['host']}{$components['path']}";  
-      } else {
-        return "http://{$components['host']}:{$components['port']}{$components['path']}";
+        if ($port == '80') {
+          return "http://$host$path";
+        }
+
+        return "http://$host:$port$path";
       }
     }
   }

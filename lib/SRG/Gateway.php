@@ -52,7 +52,9 @@
       \SRG::log("importing repository '$url'");
       $validator = static::validator_for($url);
       if ($validator->verify()) {
-        if (!$validator->not_modified()) {
+        $repository = $validator->repository();
+
+        if ($validator->modified()) {
           $importer = new \SRG\Importer($validator->repository(), $validator->body);
           $importer->import();
         }

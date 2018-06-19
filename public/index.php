@@ -60,37 +60,7 @@
   $app->get('/gateway', '\SRG\Web:gateway');
 
   # the oai pmh routes (Identify, ListRecords etc)
-  use \Psr\Http\Message\ServerRequestInterface as Request;
-  use \Psr\Http\Message\ResponseInterface as Response;
-  $app->get('/oai/{repository:.*}', function (Request $request, Response $response, array $args) {
-    $params = $request->getQueryParams();
-    $url = \SRG\Util::build_url($args['repository']);
-
-    $repository = \SRG\Repository::find_by_url($url, ['strict' => TRUE]);
-
-    $response = $response->withHeader('Content-type', 'text/xml');
-
-    if ($params['verb'] == 'Identify') {
-      return $this->view->render($response, 'identify.xml', [
-        'url' => $url,
-        'identify' => $repository->identify
-      ]);
-    }
-
-    if ($params['verb'] == 'ListMetadataFormats') {
-      return $this->view->render($response, 'list_metadata_formats.xml', [
-        'url' => $url,
-        'list_metadata_formats' => $repository->list_metadata_formats
-      ]);
-    }
-
-    // $response->getBody()->write($repository->identify);
-    // $response->getBody()->write(var_export($args, true));
-    // $response->getBody()->write(var_export($params, true));
-    // $response->getBody()->write(var_export($url, true));
-
-    return $response;
-  });
+  $app->get('/oai-pmh/{repository:.*}', '\SRG\Web:oai_pmh');
 
   $app->run();
 

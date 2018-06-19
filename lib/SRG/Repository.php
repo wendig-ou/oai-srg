@@ -5,7 +5,8 @@
     static $table_name = 'repositories';
     static $safe_columns = [
       'url', 'modified_at', 'approved', 'verified', 'errors', 'admin_email',
-      'formats', 'verified_at', 'identify', 'list_metadata_formats'
+      'formats', 'verified_at', 'identify', 'list_metadata_formats',
+      'imported_at'
     ];
 
     public static function find_by_url($url, $options = []) {
@@ -30,6 +31,10 @@
 
     public function ready() {
       return $this->approved && $this->verified;
+    }
+
+    public function never_imported() {
+      return !$this->imported_at;
     }
 
     public function record_count() {

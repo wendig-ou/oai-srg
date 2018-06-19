@@ -44,8 +44,8 @@
         Gateway::approve($params['approve']);
       }
 
-      if (isset($params['verify'])) {
-        Gateway::verify($params['verify']);
+      if (isset($params['import'])) {
+        Gateway::import($params['import']);
       }
 
       if (isset($params['terminate'])) {
@@ -60,7 +60,28 @@
     }
 
     public function oai_pmh($req, $res, $args) {
+      $params = $req->getQueryParams();
+      $url = \SRG\Util::build_url($args['repository']);
+      $repository = \SRG\Repository::find_by_url($url, ['strict' => TRUE]);
+      
+      $res = $res->withHeader('Content-type', 'text/xml');
 
+      if ($params['verb'] == 'Identify') {
+        return $this->container->view->render($res, 'identify.xml', [
+          'url' => $url,
+          'identify' => $repository->identify
+        ]);
+      }
+
+      if ($params['verb'] == 'ListMetadataFormats') {
+        return $this->container->view->render($res, 'list_metadata_formats.xml', [
+          'url' => $url,
+          'list_metadata_formats' => $repository->list_metadata_formats
+        ]);
+      }
+      
+      # render bad verb
+      return $res;
     }
 
     // protected function render($res, $template, $args = []) {
