@@ -101,11 +101,15 @@
 
       $filter = new \Twig_SimpleFilter('reposify', function ($string) {
         $parts = parse_url($string);
-        if ($parts['scheme'] == 'https') {
+        if ($parts['port'] == '443') {
           return $parts['host'] . ':443' . $parts['path'];
-        } else {
-          return $parts['host'] . ':' . $parts['port'] . $parts['path'];
         }
+
+        if ($parts['port'] == '') {
+          return $parts['host'] . $parts['path'];
+        }
+
+        return $parts['host'] . ':' . $parts['port'] . $parts['path'];
       });
       $this->container->view->getEnvironment()->addFilter($filter);
     }
