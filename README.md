@@ -1,9 +1,11 @@
 ## Production (how to use)
 
-* checkout the repo
-* make the target your WebServer's DocumentRoot
+* checkout the repo to within apache's DocumentRoot
+* copy .env.sample to .env and make changes within the file to reflect your
+  deployment
 * run `composer install --no-dev`
 * run `composer dump-autoload`
+* run the setup routine: `php bin/setup.php` to create the database structure
 
 ## Development
 
