@@ -134,7 +134,7 @@
     }
 
     private function base_url_matches() {
-      if (getenv('SRG_REQUIRE_BASE_URL') == 'true') {
+      if (getenv('SRG_REQUIRE_BASE_URL') === 'true') {
         $ns = 'http://www.openarchives.org/OAI/2.0/';
         $baseUrl = $this->doc()->getElementsByTagNameNS($ns, 'baseURL')->item(0)->textContent;
         $expectedBaseUrl = \SRG::baseUrl() . '/gateway';

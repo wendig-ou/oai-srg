@@ -18,7 +18,7 @@
         return $res->withRedirect(getenv('SRG_BASE_URL'), 302);
       } else {
         $opts = ['password_mismatch' => $req->isPost()];
-        return $this->container->view->render($res, 'login.html', $opts);
+        return $this->container->view->render($res, 'admin/login.html', $opts);
       }
     }
 
@@ -63,7 +63,7 @@
     }
 
     public function form($req, $res, $args) {
-      return $this->container->view->render($res, 'admin/form.html');
+      return $this->container->view->render($res, 'admin/initiate.html');
     }
 
     public function oai_pmh($req, $res, $args) {
@@ -73,15 +73,15 @@
       
       $res = $res->withHeader('Content-type', 'text/xml');
 
-      if ($params['verb'] == 'Identify') {
-        return $this->container->view->render($res, 'identify.xml', [
+      if ($params['verb'] === 'Identify') {
+        return $this->container->view->render($res, 'oai_pmh/Identify.xml', [
           'url' => $url,
           'identify' => $repository->identify
         ]);
       }
 
-      if ($params['verb'] == 'ListMetadataFormats') {
-        return $this->container->view->render($res, 'list_metadata_formats.xml', [
+      if ($params['verb'] === 'ListMetadataFormats') {
+        return $this->container->view->render($res, 'oai_pmh/ListMetadataFormats.xml', [
           'url' => $url,
           'list_metadata_formats' => $repository->list_metadata_formats
         ]);
@@ -108,11 +108,11 @@
 
       $filter = new \Twig_SimpleFilter('reposify', function ($string) {
         $parts = parse_url($string);
-        if ($parts['port'] == '443') {
+        if ($parts['port'] === '443') {
           return $parts['host'] . ':443' . $parts['path'];
         }
 
-        if ($parts['port'] == '') {
+        if ($parts['port'] === '') {
           return $parts['host'] . $parts['path'];
         }
 

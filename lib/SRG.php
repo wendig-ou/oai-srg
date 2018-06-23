@@ -32,7 +32,7 @@
     }
 
     public static function log($message) {
-      if (getenv('SRG_DEBUG') == 'true') {
+      if (getenv('SRG_DEBUG') === 'true') {
         error_log('SRG: ' . $message);
       }
     }
