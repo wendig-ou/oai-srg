@@ -8,10 +8,17 @@
     }
 
     public function login($req, $res, $args) {
-      if (\SRG::auth()->login()) {
+      $password = NULL;
+
+      if ($req->isPost()) {
+        $password = $req->getParsedBodyParam('password');
+      }
+
+      if (\SRG::auth()->login($password)) {
         return $res->withRedirect(getenv('SRG_BASE_URL'), 302);
       } else {
-        return $this->container->view->render($res, 'login_failed.html');
+        $opts = ['password_mismatch' => $req->isPost()];
+        return $this->container->view->render($res, 'login.html', $opts);
       }
     }
 

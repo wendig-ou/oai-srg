@@ -2,6 +2,10 @@
   vertical-align: top;
 }*/
 
+div.main {
+  min-height: 500px;
+}
+
 table.repositories th:nth-child(1) {
   width: 650px;
 }

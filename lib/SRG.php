@@ -9,9 +9,12 @@
 
   require_once SRG_ROOT . '/vendor/autoload.php';
 
-  $suffix = (APP_ENV == 'production' ? '' : '.' . APP_ENV);
-  $dotenv = new Dotenv\Dotenv(SRG_ROOT, '.env' . $suffix);
-  $dotenv->load();
+  $suffix = (APP_ENV === 'production' ? '' : '.' . APP_ENV);
+
+  if (file_exists(SRG_ROOT . '/.env' . $suffix)) {
+    $dotenv = new Dotenv\Dotenv(SRG_ROOT, '.env' . $suffix);
+    $dotenv->load();
+  }
 
   libxml_use_internal_errors(TRUE);
   libxml_disable_entity_loader(FALSE);

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-6 offset-md-3">
+    <h3 class="display-3 mb-3 mt-5">
+      {{ block('title') }}
+    </h3>
+
+    <form action="{{base_url}}/login" method="POST">
+      <div class="form-group">
+        <label for="password">Please enter the admin password</label>
+        <input
+          class="form-control {% if password_mismatch %}is-invalid{% endif %}"
+          type="text"
+          id="password"
+          name="password"
+        />
+        {% if password_mismatch %}
+          <div class="invalid-feedback">
+            the provided password did not match
+          </div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
