@@ -44,3 +44,11 @@ You find the current directory at `/vagrant` so you will probably want to
 ~~~ bash
 cd /vagrant
 ~~~
+
+From there, to start the development server, run 
+
+~~~ bash
+bin/dev.sh
+~~~
+
+And navigate to http://localhost:3000 with your browser.
