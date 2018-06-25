@@ -16,7 +16,10 @@
         'admin_email' => $data['admin_email'],
         'identify' => $data['data']['identify'],
         'list_metadata_formats' => $data['data']['list_metadata_formats'],
-        'imported_at' => Util::to_db_date('now')
+        'imported_at' => Util::to_db_date('now'),
+        'name' => $data['repository_name'],
+        'first_record_at' => $data['earliest_datestamp'],
+        'version' => $data['version']
       ]);
 
       $this->repository->delete_records();
@@ -35,6 +38,7 @@
         'repository_name' => $this->doc->getElementsByTagNameNS(\SRG::$oai_ns, 'repositoryName')->item(0)->nodeValue,
         'admin_email' => $this->doc->getElementsByTagNameNS(\SRG::$oai_ns, 'adminEmail')->item(0)->nodeValue,
         'earliest_datestamp' => $this->doc->getElementsByTagNameNS(\SRG::$oai_ns, 'earliestDatestamp')->item(0)->nodeValue,
+        'version' => $this->doc->getElementsByTagNameNS(\SRG::$oai_ns, 'protocolVersion')->item(0)->nodeValue,
         'data' => [
           'identify' => $this->getIdentify(),
           'list_metadata_formats' => $this->getListMetadataFormats(),

@@ -6,7 +6,7 @@
     static $safe_columns = [
       'url', 'modified_at', 'approved', 'verified', 'errors', 'admin_email',
       'formats', 'verified_at', 'identify', 'list_metadata_formats',
-      'imported_at'
+      'imported_at', 'name', 'version', 'first_record_at'
     ];
 
     public static function find_by_url($url, $options = []) {

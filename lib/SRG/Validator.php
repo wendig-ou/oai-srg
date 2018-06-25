@@ -174,7 +174,7 @@
         $this->errors[] = 'granularity element not found';
         return FALSE;
       } else {
-        $actual = $granularity->item(0)->textContent();
+        $actual = $granularity->item(0)->textContent;
         if ($actual != 'YYYY-MM-DD') {
           $this->errors[] = 'harvesting granularity has to be "YYYY-MM-DD" but is "' . $actual . '"';
           return FALSE;
