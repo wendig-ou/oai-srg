@@ -82,6 +82,7 @@
 
   # TODO: catch guzzle no resolve errors
   # TODO: implement friends
+  # TODO: trim urls on initiate
   //   * what about his example data? Its not a repository, is it?
   // * sample data?
   //   * he will send some
