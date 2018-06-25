@@ -105,18 +105,7 @@
       $twig_env->addGlobal('base_url', getenv('SRG_BASE_URL'));
       $twig_env->addGlobal('user', \SRG::auth()->user());
 
-      $filter = new \Twig_SimpleFilter('reposify', function ($string) {
-        $parts = parse_url($string);
-        if ($parts['port'] === '443') {
-          return $parts['host'] . ':443' . $parts['path'];
-        }
-
-        if ($parts['port'] === '') {
-          return $parts['host'] . $parts['path'];
-        }
-
-        return $parts['host'] . ':' . $parts['port'] . $parts['path'];
-      });
+      $filter = new \Twig_SimpleFilter('reposify', function($s) {return \SRG\Util::reposify($s);});
       $this->container->view->getEnvironment()->addFilter($filter);
     }
 

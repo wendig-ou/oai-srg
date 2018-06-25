@@ -38,5 +38,23 @@
         return "http://$host:$port$path";
       }
     }
+
+    public static function reposify($string) {
+      $parts = parse_url($string);
+
+      if (!isset($parts['host'])) {$parts['host'] = '';}
+      if (!isset($parts['port'])) {$parts['port'] = '';}
+      if (!isset($parts['path'])) {$parts['path'] = '';}
+
+      if ($parts['port'] === '443') {
+        return $parts['host'] . ':443' . $parts['path'];
+      }
+
+      if ($parts['port'] === '') {
+        return $parts['host'] . $parts['path'];
+      }
+
+      return $parts['host'] . ':' . $parts['port'] . $parts['path'];
+    }
   }
 ?>
