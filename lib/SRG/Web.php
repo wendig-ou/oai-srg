@@ -34,7 +34,6 @@
         $repositories = Gateway::published();
       }
       
-
       return $this->container->view->render($res, 'index.html', [
         'repositories' => $repositories
       ]);

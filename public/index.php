@@ -1,7 +1,7 @@
 <?php 
   # To help the built-in PHP dev server, check if the request was actually for
   # something which should probably be served as a static file
-  if (PHP_SAPI == 'cli-server') {
+  if (PHP_SAPI === 'cli-server') {
     $url  = parse_url($_SERVER['REQUEST_URI']);
     $file = __DIR__ . $url['path'];
     if (is_file($file)) {
@@ -20,8 +20,8 @@
 
   $app = new \Slim\App([
     'settings' => [
-      'debug' => getenv('SRG_DEBUG') == 'true',
-      'displayErrorDetails' => getenv('SRG_DEBUG') == 'true',
+      'debug' => getenv('SRG_DEBUG') === 'true',
+      'displayErrorDetails' => getenv('SRG_DEBUG') === 'true',
       'addContentLengthHeader' => TRUE,
       'determineRouteBeforeAppMiddleware' => TRUE
     ]
@@ -42,11 +42,26 @@
   };
 
   # request logging middleware
-  $app->add(function ($req, $res, $next) {
+  $app->add(function($req, $res, $next) {
     $method = $req->getMethod();
     $path = $req->getRequestTarget();
     \SRG::log("$method: $path");
     $res = $next($req, $res);
+    return $res;
+  });
+
+  # SRG exceptions middleware
+  $app->add(function($req, $res, $next) {
+    try {
+      $res = $next($req, $res);
+    } catch(\SRG\Exception $e) {
+      global $container;
+      $res = $res->withStatus($e->getCode());
+      return $container->view->render($res, 'error.html', [
+        'message' => $e->getMessage()
+      ]);
+    }
+
     return $res;
   });
 
@@ -67,4 +82,14 @@
 
   # TODO: catch guzzle no resolve errors
   # TODO: implement friends
+  //   * what about his example data? Its not a repository, is it?
+  // * sample data?
+  //   * he will send some
+  // * auth
+  //   * proper login form but only when there is no REMOTE_USER
+  //   * no user admin
+  // * he will check about the visuals
+  // * what about the OAI-PMH interface quote?
+  //   * no news
+
 ?>

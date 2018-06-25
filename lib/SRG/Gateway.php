@@ -21,6 +21,16 @@
 
     public static function initiate($url) {
       \SRG::log("initiating mediation for repository '$url'");
+      if (!static::validate_repository_url($url)) {
+        $message = [
+          'You are submitting the url "' . $url . '" for mediation.',
+          'Repository urls must have scheme, host and path.',
+          'Also they cannot contain a query string nor a hash fragment.'
+        ];
+
+        throw new \SRG\Exception(join(' ', $message), 406);
+      }
+
       if ($repository = Repository::find_by_url($url, ['strict' => FALSE])) {
         \SRG::log("repository '$url' exists in db");
       } else {
@@ -72,6 +82,17 @@
 
     public static function validator_for($url) {
       return new \SRG\Validator($url);
+    }
+
+    public static function validate_repository_url($url) {
+      $parts = parse_url($url);
+
+      if (!isset($parts['host']) || !$parts['host']) {return FALSE;}
+      if (!isset($parts['scheme']) || !$parts['scheme']) {return FALSE;}
+      if (isset($parts['query']) && $parts['query']) {return FALSE;}
+      if (isset($parts['fragment']) && $parts['fragment']) {return FALSE;}
+
+      return TRUE;
     }
   }
 ?>
