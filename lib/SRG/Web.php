@@ -43,24 +43,29 @@
       $params = $req->getQueryParams();
 
       if (isset($params['initiate'])) {
-        Gateway::initiate($params['initiate']);
+        $url = trim($params['initiate']);
+        Gateway::initiate($url);
       }
 
       if (isset($params['terminate'])) {
-        Gateway::terminate($params['terminate']);
+        $url = trim($params['terminate']);
+        Gateway::terminate($url);
       }
 
       if ($this->logged_in()) {
         if (isset($params['approve'])) {
-          Gateway::approve($params['approve']);
+          $url = trim($params['approve']);
+          Gateway::approve($url);
         }
 
         if (isset($params['import'])) {
-          Gateway::import($params['import']);
+          $url = trim($params['import']);
+          Gateway::import($url);
         }
 
         if (isset($params['terminate-unilaterally'])) {
-          Gateway::terminate_unilaterally($params['terminate-unilaterally']);
+          $url = trim($params['terminate-unilaterally']);
+          Gateway::terminate_unilaterally($url);
         }
       }
 
