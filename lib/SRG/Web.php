@@ -82,17 +82,30 @@
       $view_url = getenv('SRG_BASE_URL') . '/oai-pmh/' . \SRG\Util::reposify($url);
       $repository = \SRG\Repository::find_by_url($url);
 
-      if (!$repository || !$repository->verified) {
+      if (!$repository) {
         $message = [
-          "the repository '{$url}' was not found (because it was not initiated,",
-          "it has been terminated or because it didn't pass verification)"
+          "the repository '{$url}' was not found (because it was not initiated",
+          "or bacause mediation has been terminated"
         ];
         throw new \SRG\Exception(join(' ', $message), 502);
       }
       
       if (!$repository->approved) {
         $message = "the repository '{$url}' has not been approved for mediation (yet)";
-        throw new \SRG\Exception(join($message), 503);
+        throw new \SRG\Exception($message, 503);
+      }
+
+      if (!$repository->verified) {
+        $message = "the repository '{$url}' didn't pass verification)";
+        throw new \SRG\Exception($message, 502);
+      }
+
+      if (!\SRG\Gateway::import($url)) {
+        $message = [
+          "the repository '{$url}' is not available at its designated location",
+          "and/or there were errors interacting with it"
+        ];
+        throw new \SRG\Exception(join(' ', $message), 504);
       }
 
       $res = $res->withHeader('Content-type', 'text/xml');
@@ -100,7 +113,10 @@
       if ($params['verb'] === 'Identify') {
         return $this->container->view->render($res, 'oai_pmh/Identify.xml', [
           'url' => $view_url,
-          'identify' => $repository->identify
+          'admin_email' => getenv('SRG_ADMIN_EMAIL'),
+          'notes' => getenv('SRG_NOTES'),
+          'friends' => \Srg\Repository::friends(),
+          'repository' => $repository
         ]);
       }
 
@@ -110,9 +126,31 @@
           'list_metadata_formats' => $repository->list_metadata_formats
         ]);
       }
-      
-      # render bad verb
-      return $res;
+
+      try {
+        if ($params['verb'] === 'GetRecord') {
+          $record = $repository->find_record($params['metadataPrefix'], $params['identifier']);
+
+          if (!$record) {
+            throw new \SRG\OAIException('record not found', 'idDoesNotExist', 404);
+          }
+
+          return $this->container->view->render($res, 'oai_pmh/GetRecord.xml', [
+            'url' => $view_url,
+            'record' => $record
+          ]);
+        }
+
+        throw new \SRG\OAIException('Illegal OAI verb', 'badVerb', 406);
+      } catch(\SRG\OAIException $e) {
+        $res = $res->withStatus($e->getCode());
+        return $this->container->view->render($res, 'oai_pmh/Error.xml', [
+          'url' => $view_url,
+          'verb' => $params['verb'],
+          'code' => $e->getOAIErrorCode(),
+          'message' => $e->getMessage()
+        ]);
+      }
     }
 
     // protected function render($res, $template, $args = []) {

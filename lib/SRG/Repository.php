@@ -13,6 +13,18 @@
       return static::find_by('url', $url, $options);
     }
 
+    public static function friends() {
+      $tn = static::$table_name;
+      $query = "SELECT url FROM $tn WHERE approved AND verified";
+      $s = \SRG::db()->prepare($query);
+      $s->execute();
+
+      $f = function($v) {
+        return getenv('SRG_BASE_URL') . '/oai-pmh/' . \SRG\Util::reposify($v);
+      };
+      return array_map($f, $s->fetchAll(\PDO::FETCH_COLUMN, 0));
+    }
+
     public function error_list() {
       if ($this->errors) {
         return explode('|', $this->errors);
@@ -42,6 +54,12 @@
       $s = \SRG::db()->prepare("SELECT count(*) AS c FROM $tn WHERE repository_id = ?");
       $s->execute([$this->id]);
       return $s->fetch()['c'];
+    }
+
+    public function find_record($prefix, $identifier) {
+      return \SRG\Record::find_by_repository_and_prefix_and_identifier(
+        $this->id, $prefix, $identifier
+      );
     }
 
     public function delete_records() {

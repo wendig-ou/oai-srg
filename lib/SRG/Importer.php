@@ -57,11 +57,21 @@
             'prefix' => $prefix,
             'identifier' => $record->getElementsByTagNameNS(\SRG::$oai_ns, 'identifier')->item(0)->nodeValue,
             'datestamp' => $record->getElementsByTagNameNS(\SRG::$oai_ns, 'datestamp')->item(0)->nodeValue,
-            'payload' => $record->ownerDocument->saveHTML($record)
+            'payload' => $this->payload($record)
           ];
         }
       }
 
+      return $result;
+    }
+
+    private function payload($record) {
+      $metadata = $record->getElementsByTagNameNS(\SRG::$oai_ns, 'metadata')->item(0);
+
+      $result = '';
+      foreach($metadata->childNodes as $cn) {
+        $result .= $record->ownerDocument->saveHTML($cn);
+      }
       return $result;
     }
 

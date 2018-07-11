@@ -84,10 +84,10 @@
       }
     }
 
-    public static function OAI_PMH_identify($url) {
-      $repository = Repository::find($url);
-      return $repository->identify;
-    }
+    // public static function OAI_PMH_identify($url) {
+    //   $repository = Repository::find($url);
+    //   return $repository->identify;
+    // }
 
     public static function validator_for($url) {
       return new \SRG\Validator($url);
