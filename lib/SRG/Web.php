@@ -46,16 +46,22 @@
         Gateway::initiate($params['initiate']);
       }
 
-      if (isset($params['approve'])) {
-        Gateway::approve($params['approve']);
-      }
-
-      if (isset($params['import'])) {
-        Gateway::import($params['import']);
-      }
-
       if (isset($params['terminate'])) {
         Gateway::terminate($params['terminate']);
+      }
+
+      if ($this->logged_in()) {
+        if (isset($params['approve'])) {
+          Gateway::approve($params['approve']);
+        }
+
+        if (isset($params['import'])) {
+          Gateway::import($params['import']);
+        }
+
+        if (isset($params['terminate-unilaterally'])) {
+          Gateway::terminate_unilaterally($params['terminate-unilaterally']);
+        }
       }
 
       return $res->withRedirect(getenv('SRG_BASE_URL'), 302);
@@ -68,20 +74,34 @@
     public function oai_pmh($req, $res, $args) {
       $params = $req->getQueryParams();
       $url = \SRG\Util::build_url($args['repository']);
-      $repository = \SRG\Repository::find_by_url($url, ['strict' => TRUE]);
+      $view_url = getenv('SRG_BASE_URL') . '/oai-pmh/' . \SRG\Util::reposify($url);
+      $repository = \SRG\Repository::find_by_url($url);
+
+      if (!$repository || !$repository->verified) {
+        $message = [
+          "the repository '{$url}' was not found (because it was not initiated,",
+          "it has been terminated or because it didn't pass verification)"
+        ];
+        throw new \SRG\Exception(join(' ', $message), 502);
+      }
       
+      if (!$repository->approved) {
+        $message = "the repository '{$url}' has not been approved for mediation (yet)";
+        throw new \SRG\Exception(join($message), 503);
+      }
+
       $res = $res->withHeader('Content-type', 'text/xml');
 
       if ($params['verb'] === 'Identify') {
         return $this->container->view->render($res, 'oai_pmh/Identify.xml', [
-          'url' => $url,
+          'url' => $view_url,
           'identify' => $repository->identify
         ]);
       }
 
       if ($params['verb'] === 'ListMetadataFormats') {
         return $this->container->view->render($res, 'oai_pmh/ListMetadataFormats.xml', [
-          'url' => $url,
+          'url' => $view_url,
           'list_metadata_formats' => $repository->list_metadata_formats
         ]);
       }
@@ -100,10 +120,15 @@
       return $req->getQueryParams();
     }
 
+    protected function logged_in() {
+      return !!\SRG::auth()->user();
+    }
+
     protected function extend() {
       $twig_env = $this->container->view->getEnvironment();
       $twig_env->addGlobal('base_url', getenv('SRG_BASE_URL'));
       $twig_env->addGlobal('user', \SRG::auth()->user());
+      $twig_env->addGlobal('now', \SRG\Util::to_oai_date('now'));
 
       $filter = new \Twig_SimpleFilter('reposify', function($s) {return \SRG\Util::reposify($s);});
       $this->container->view->getEnvironment()->addFilter($filter);

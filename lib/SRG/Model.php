@@ -54,7 +54,7 @@
         return $s->fetch();
       } else {
         if ($options['strict']) {
-          throw new \SRG\Exception("{__CLASS__}: record with $column = '{$value}' couldn't be found");
+          throw new \SRG\Exception(static::class . ": record with $column = '{$value}' couldn't be found");
         }
       }
     }

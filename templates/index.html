@@ -31,9 +31,7 @@
           <small>approved / verified</small>
         {% endif %}
       </th>
-      {% if user %}
-        <th class="text-right"></th>
-      {% endif %}
+      <th class="text-right"></th>
     </tr>
     {% for repository in repositories %}
       <tr>
@@ -148,12 +146,12 @@
 
           {% if repository.verified_at %}
             <small class="d-block">
-              verified at <strong>{{repository.verified_at}}</strong>
+              last verified at <strong>{{repository.verified_at}}</strong>
             </small>
           {% endif %}
         </td>
-        {% if user %}
-          <td class="text-right">
+        <td class="text-right">
+          {% if user %}
             {% if not repository.approved %}
               <a class="d-block" href="{{base_url}}/gateway?approve={{repository.url}}">
                 approve <i class="fa fa-thumbs-up"></i>
@@ -162,14 +160,14 @@
             <a class="d-block" href="{{base_url}}/gateway?import={{repository.url}}">
               verify <i class="fa fa-check"></i>
             </a>
+          {% endif %}
+
+          {% if repository.approved and repository.verified %}
             <a class="d-block" href="{{base_url}}/gateway?terminate={{repository.url}}">
-              terminate unilaterally <i class="fa fa-minus-circle"></i>
-            </a>
-            <a class="d-block" href="{{base_url}}/gateway?import={{repository.url}}">
               request termination <i class="fa fa-stop-circle"></i>
             </a>
-          </td>
-        {% endif %}
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
   </table>

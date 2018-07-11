@@ -76,6 +76,30 @@
       return FALSE;
     }
 
+    public function can_terminate() {
+      $this->log("sending GET request");
+      $response = NULL;
+
+      try {
+        $response = \SRG::http()->request('GET', $this->repository()->url);
+
+        if ($response->getStatusCode() === 200) {
+          $this->body = $response->getBody();
+
+          if (getenv('SRG_REQUIRE_BASE_URL') === 'true') {
+            return !$this->base_url_matches();
+          } else {
+            return TRUE;
+          }
+        } else {
+          return TRUE;
+        }
+      } catch(\GuzzleHttp\Exception\ConnectException $e) {
+        $this->errors[] = $e->getMessage();
+        return TRUE;
+      }
+    }
+
     public function repository() {
       if (!$this->repo) {
         $this->repo = Repository::find_by_url($this->url, ['strict' => FALSE]);
@@ -118,9 +142,8 @@
     }
 
     private function is_utf8() {
-      $encoding = $this->doc()->encoding;
-      if ($encoding != 'UTF-8') {
-        $this->errors[] = "the xml encoding is {$encoding} but has to be UTF-8";
+      if (!mb_check_encoding($this->body, 'UTF-8')) {
+        $this->errors[] = "the xml encoding is not valid UTF-8";
         return FALSE;
       }
 

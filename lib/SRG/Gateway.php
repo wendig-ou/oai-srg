@@ -47,6 +47,15 @@
     }
 
     public static function terminate($url) {
+      \SRG::log("verifying termination for repository '$url'");
+      $repository = Repository::find_by_url($url);
+      $validator = static::validator_for($url);
+      if ($validator->can_terminate()) {
+        $repository->delete();
+      }
+    }
+
+    public static function terminate_unilaterally($url) {
       \SRG::log("terminating mediation for repository '$url'");
       $repository = Repository::find_by_url($url);
       $repository->delete();

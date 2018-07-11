@@ -42,7 +42,7 @@ CREATE TABLE `records` (
   `modified_at` date DEFAULT NULL,
   `payload` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=926 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1869 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,8 +66,11 @@ CREATE TABLE `repositories` (
   `identify` text,
   `list_metadata_formats` text,
   `imported_at` datetime DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  `version` varchar(10) DEFAULT NULL,
+  `first_record_at` date DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -95,4 +98,4 @@ CREATE TABLE `resumption_tokens` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-19  6:11:22
+-- Dump completed on 2018-07-11  1:12:35

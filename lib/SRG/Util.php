@@ -21,17 +21,21 @@
       return (new \DateTime($date))->format('Y-m-d H:i:s');
     }
 
+    public static function to_oai_date($date) {
+      return (new \DateTime($date))->format('Y-m-d\TH:i:s\Z');
+    }
+
     public static function build_url($uri) {
-      if (preg_match('/^([^\/]+)(:\d+)?(.*)$/', $uri, $matches)) {
+      if (preg_match('/^([^\/:]+)(:\d+)?(.*)$/', $uri, $matches)) {
         $host = $matches[1];
-        $port = ($matches[2] ? preg_replace('/^:/', $matches[2]) : '80');
+        $port = ($matches[2] ? preg_replace('/^:/', '', $matches[2]) : '80');
         $path = $matches[3];
 
-        if ($port == '443') {
+        if ($port === '443') {
           return "https://$host$path";
         }
 
-        if ($port == '80') {
+        if ($port === '80') {
           return "http://$host$path";
         }
 
@@ -46,7 +50,9 @@
       if (!isset($parts['port'])) {$parts['port'] = '';}
       if (!isset($parts['path'])) {$parts['path'] = '';}
 
-      if ($parts['port'] === '443') {
+      if ($parts['scheme'] === 'https') {$parts['port'] = '443';}
+
+      if ($parts['port'] === '443' || $parts['port'] == 443) {
         return $parts['host'] . ':443' . $parts['path'];
       }
 

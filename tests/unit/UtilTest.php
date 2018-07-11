@@ -28,4 +28,9 @@ class UtilTest extends \Codeception\Test\Unit
         $this->assertEquals(TRUE, !getenv('SRG_DOESNT_EXIST'));
         $this->assertEquals('test', getenv('APP_ENV'));
     }
+
+    public function testToOaiDate() {
+        $date = 'Wed, 18 Apr 2018 04:57:30 GMT';
+        $this->assertEquals('2018-04-18T04:57:30Z', \SRG\Util::to_oai_date($date));
+    }
 }
