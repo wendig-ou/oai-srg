@@ -52,3 +52,8 @@ bin/dev.sh
 ~~~
 
 And navigate to http://localhost:3000 with your browser.
+
+## Tests
+
+The test suits can be run with `bin/test.sh`. Make sure the test data server
+is running (`bin/serve-test-data.sh`).

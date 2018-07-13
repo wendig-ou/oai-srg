@@ -3,24 +3,34 @@
 
   class ResumptionToken extends Model {
     static $table_name = 'resumption_tokens';
-    static $safe_columns = ['identifier', 'state'];
+    static $safe_columns = ['identifier', 'state', 'created_at'];
 
-    public static function before_save($values) {
-      if ($values['state']) {
-        $values['state'] = json_encode($values['state']);
-      }
-      return $values;
+    public static function save_state($state) {
+      $identifier = static::generate_identifier();
+      static::create([
+        'identifier' => $identifier,
+        'created_at' => \SRG\Util::to_db_date('now'),
+        'state' => json_encode($state)
+      ]);
+      return $identifier;
+    }
+
+    public static function load_state($identifier) {
+      $rt = static::find_by('identifier', $identifier);
+      $state = json_decode($rt->state, TRUE);
+      return $state;
+    }
+
+    public static function generate_identifier() {
+      $bytes = openssl_random_pseudo_bytes(32);
+      return bin2hex($bytes);
     }
 
     public static function cleanup() {
-      $ts = (new \DateTime())->modify('-24 hours');
-      
-      $s = \SRG::db()->prepare("INSERT INTO $tn ($columns) VALUES ($qm)");
-      $s->execute($value_list);
-    }
-
-    public function state() {
-      return json_decode($this->state);
+      $tn = static::$table_name;
+      $ts = \SRG\Util::to_db_date((new \DateTime())->modify('-24 hours'));
+      $s = \SRG::db()->prepare("DELETE FROM $tn WHERE created_at < ? OR created_at IS NULL");
+      $s->execute([$ts]);
     }
   }
 ?>

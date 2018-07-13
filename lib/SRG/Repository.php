@@ -6,7 +6,7 @@
     static $safe_columns = [
       'url', 'modified_at', 'approved', 'verified', 'errors', 'admin_email',
       'formats', 'verified_at', 'identify', 'list_metadata_formats',
-      'imported_at', 'name', 'version', 'first_record_at'
+      'imported_at', 'name', 'version', 'first_record_at', 'prefixes'
     ];
 
     public static function find_by_url($url, $options = []) {
@@ -60,6 +60,10 @@
       return \SRG\Record::find_by_repository_and_prefix_and_identifier(
         $this->id, $prefix, $identifier
       );
+    }
+
+    public function find_records($prefix, $identifier, $criteria = []) {
+      return \SRG\Record::find_by_criteria($this->id, $prefix, $identifier, $criteria);
     }
 
     public function delete_records() {

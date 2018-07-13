@@ -54,6 +54,17 @@
   $app->add(function($req, $res, $next) {
     try {
       $res = $next($req, $res);
+    } catch(\SRG\OAIException $e) {
+      global $container;
+      $res = $res->withHeader('Content-type', 'text/xml');
+      $res = $res->withStatus($e->getCode());
+      $params = $req->getQueryParams();
+      return $container->view->render($res, 'oai_pmh/Error.xml', [
+        'url' => $e->getUrl(),
+        'verb' => \SRG\Util::get($params, 'verb'),
+        'code' => $e->getOAIErrorCode(),
+        'message' => $e->getMessage()
+      ]);
     } catch(\SRG\Exception $e) {
       global $container;
       $res = $res->withStatus($e->getCode());
@@ -80,16 +91,6 @@
 
   $app->run();
 
-  # TODO: catch guzzle no resolve errors
-  # TODO: implement friends
-  //   * what about his example data? Its not a repository, is it?
-  // * sample data?
-  //   * he will send some
-  // * auth
-  //   * proper login form but only when there is no REMOTE_USER
-  //   * no user admin
-  // * he will check about the visuals
-  // * what about the OAI-PMH interface quote?
-  //   * no news
+  # TODO: add indexes
 
 ?>

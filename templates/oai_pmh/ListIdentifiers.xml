@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OAI-PMH xmlns="http://www.openarchives.org/OAI/2.0/"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/
+         http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
+  <responseDate>2002-06-01T19:20:30Z</responseDate>
+  <request
+    verb="ListIdentifiers"
+    from="1998-01-15" 
+    metadataPrefix="oldarXiv"
+  >{{url}}</request>
+  <ListIdentifiers>
+    {% for record in records %}
+      <header>  
+        <identifier>{{record.identifier}}</identifier>
+        <datestamp>{{record.modified_at}}</datestamp>
+      </header>
+    {% endfor %}
+    {% if token %}
+      {% if token == 'LAST' %}
+        <resumptionToken />
+      {% else %}
+        <resumptionToken expirationDate="{{expires_at}}" completeListSize="{{total}}">
+          {{token}}
+        </resumptionToken>
+      {% endif %}
+    {% endif %}
+  </ListIdentifiers>
+</OAI-PMH>

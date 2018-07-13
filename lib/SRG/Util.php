@@ -13,16 +13,25 @@
     }
 
     public static function to_http_date($date) {
+      if (! $date instanceof \DateTime) {
+        $date = new \DateTime($date);
+      }
       # RFC 7231
-      return (new \DateTime($date))->format('D, d M Y H:i:s e');
+      return $date->format('D, d M Y H:i:s e');
     }
 
     public static function to_db_date($date) {
-      return (new \DateTime($date))->format('Y-m-d H:i:s');
+      if (! $date instanceof \DateTime) {
+        $date = new \DateTime($date);
+      }
+      return $date->format('Y-m-d H:i:s');
     }
 
     public static function to_oai_date($date) {
-      return (new \DateTime($date))->format('Y-m-d\TH:i:s\Z');
+      if (! $date instanceof \DateTime) {
+        $date = new \DateTime($date);
+      }
+      return $date->format('Y-m-d\TH:i:s\Z');
     }
 
     public static function build_url($uri) {
@@ -61,6 +70,14 @@
       }
 
       return $parts['host'] . ':' . $parts['port'] . $parts['path'];
+    }
+
+    public static function get($array, $key, $default = NULL) {
+      if (isset($array[$key])) {
+        return $array[$key];
+      } else {
+        return $default;
+      }
     }
   }
 ?>

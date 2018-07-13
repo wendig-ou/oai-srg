@@ -54,18 +54,15 @@
         return $s->fetch();
       } else {
         if ($options['strict']) {
-          throw new \SRG\Exception(static::class . ": record with $column = '{$value}' couldn't be found");
+          throw new \SRG\Exception(
+            static::class . ": record with $column = '{$value}' couldn't be found",
+            404
+          );
         }
       }
     }
 
-    public static function before_save($values) {
-      return $values;
-    }
-
     public static function create($values) {
-      $values = static::before_save($values);
-
       $columns = [];
       $value_list = [];
       foreach (static::$safe_columns as $column) {
@@ -82,8 +79,6 @@
     }
 
     public function update($values) {
-      $values = static::before_save($values);
-
       $setters = [];
       $update_values = [];
       foreach (static::$safe_columns as $column) {

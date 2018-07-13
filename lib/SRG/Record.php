@@ -30,6 +30,40 @@
       return $s->fetchObject(get_called_class());
     }
 
+    public static function find_by_criteria($repository_id, $prefix, $criteria = []) {
+      $where = ['repository_id = ?', 'prefix = ?'];
+      $params = [$repository_id, $prefix];
+
+      if ($criteria['from']) {
+        $where[] = 'modified_at >= ?';
+        $params[] = \SRG\Util::to_db_date($criteria['from']);
+      }
+
+      if ($criteria['until']) {
+        $where[] = 'modified_at <= ?';
+        $params[] = \SRG\Util::to_db_date($criteria['until']);
+      }
+
+      $tn = static::$table_name;
+      $per_page = intval(getenv('SRG_PER_PAGE'));
+      $offset = ($criteria['page'] - 1) * $per_page;
+      $query = "SELECT * FROM $tn WHERE " . join(' AND ', $where) . " LIMIT $per_page OFFSET $offset";
+      $count_query = "SELECT count(*) FROM $tn WHERE " . join(' AND ', $where);
+
+      \SRG::log('SQL: ' . $query);
+      $s = \SRG::db()->prepare($query);
+      $s->execute($params);
+      $s->setFetchMode(\PDO::FETCH_CLASS, get_called_class());
+      $records = $s->fetchAll();
+
+      \SRG::log('SQL: ' . $count_query);
+      $s = \SRG::db()->prepare($count_query);
+      $s->execute($params);
+      $total = $s->fetch(\PDO::FETCH_COLUMN);
+
+      return ['records' => $records, 'total' => $total];
+    }
+
     public static function delete_by_repository_id($id) {
       return static::delete_by('repository_id', $id);
     }

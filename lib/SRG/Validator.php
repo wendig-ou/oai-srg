@@ -126,13 +126,13 @@
     }
 
     private function is_xml() {
-      if (getenv('SRG_ALLOW_APPLICATION_XML') === 'true') {
-        if (!preg_match('/^(text|application)\/xml/', $this->content_type)) {
-          $this->errors[] = "the content type '{$this->content_type}' doesn't match text/xml or application/xml";
-          return FALSE;
-        }
-      } else {
-        if (!preg_match('/^text\/xml/', $this->content_type)) {
+      if (!preg_match('/^text\/xml/', $this->content_type)) {
+        if (getenv('SRG_ALLOW_APPLICATION_XML') === 'true') {
+          if (!preg_match('/^application\/xml/', $this->content_type)) {
+            $this->errors[] = "the content type '{$this->content_type}' doesn't match text/xml or application/xml";
+            return FALSE;
+          }
+        } else {
           $this->errors[] = "the content type '{$this->content_type}' doesn't match text/xml";
           return FALSE;
         }

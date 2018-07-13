@@ -80,6 +80,32 @@
         </oai_dc:dc>
       </oai:metadata>
     </oai:record>
+    <oai:record>
+      <oai:header>
+        <oai:identifier>123456</oai:identifier>
+        <oai:datestamp>2018-07-12</oai:datestamp>
+      </oai:header>
+      <oai:metadata>
+        <oai_dc:dc 
+            xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" 
+            xmlns:dc="http://purl.org/dc/elements/1.1/" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ 
+                                http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+          <dc:title>Test work</dc:title>
+          <dc:creator>Test creator</dc:creator>
+          <dc:type>test</dc:type>
+          <dc:source>Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Sed eget sagittis leo, vitae laoreet mauris. Aliquam mauris ex, 
+            sollicitudin ac pretium eu, suscipit laoreet arcu. Sed ac nisi 
+            metus. Quisque tempus nunc ante, ac lobortis nunc cursus 
+            condimentum. In hac habitasse platea dictumst.
+          </dc:source>
+          <dc:identifier>http://example.com/cgi-bin/ptext?
+            doc=ipsum123456</dc:identifier>
+        </oai_dc:dc>
+      </oai:metadata>
+    </oai:record>
   </ListRecords>
   <ListRecords metadataPrefix="oai_rfc1807">
     <oai:record>

@@ -19,7 +19,8 @@
         'imported_at' => Util::to_db_date('now'),
         'name' => $data['repository_name'],
         'first_record_at' => $data['earliest_datestamp'],
-        'version' => $data['version']
+        'version' => $data['version'],
+        'prefixes' => join(',', $data['prefixes'])
       ]);
 
       $this->repository->delete_records();
@@ -39,6 +40,7 @@
         'admin_email' => $this->doc->getElementsByTagNameNS(\SRG::$oai_ns, 'adminEmail')->item(0)->nodeValue,
         'earliest_datestamp' => $this->doc->getElementsByTagNameNS(\SRG::$oai_ns, 'earliestDatestamp')->item(0)->nodeValue,
         'version' => $this->doc->getElementsByTagNameNS(\SRG::$oai_ns, 'protocolVersion')->item(0)->nodeValue,
+        'prefixes' => [],
         'data' => [
           'identify' => $this->getIdentify(),
           'list_metadata_formats' => $this->getListMetadataFormats(),
@@ -50,6 +52,7 @@
       for ($i = 0; $i < $list_records_batches->length; $i++) {
         $batch = $list_records_batches->item($i);
         $prefix = $batch->getAttribute('metadataPrefix');
+        $result['prefixes'][] = $prefix;
 
         $records = $batch->getElementsByTagNameNS(\SRG::$oai_ns, 'record');
         foreach ($records as $record) {

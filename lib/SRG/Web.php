@@ -95,20 +95,22 @@
         throw new \SRG\Exception($message, 503);
       }
 
-      if (!$repository->verified) {
-        $message = "the repository '{$url}' didn't pass verification)";
-        throw new \SRG\Exception($message, 502);
-      }
-
       if (!\SRG\Gateway::import($url)) {
         $message = [
           "the repository '{$url}' is not available at its designated location",
-          "and/or there were errors interacting with it"
+          "and/or there were errors interacting with it and/or the retrieved",
+          "data didn't pass verification"
         ];
         throw new \SRG\Exception(join(' ', $message), 504);
       }
 
       $res = $res->withHeader('Content-type', 'text/xml');
+
+      if (!\SRG\Util::get($params, 'verb')) {
+        throw new \SRG\OAIException(
+          'no OAI PMH verb given', 'badVerb', $view_url, 406
+        );
+      }
 
       if ($params['verb'] === 'Identify') {
         return $this->container->view->render($res, 'oai_pmh/Identify.xml', [
@@ -127,30 +129,91 @@
         ]);
       }
 
-      try {
-        if ($params['verb'] === 'GetRecord') {
-          $record = $repository->find_record($params['metadataPrefix'], $params['identifier']);
-
-          if (!$record) {
-            throw new \SRG\OAIException('record not found', 'idDoesNotExist', 404);
-          }
-
-          return $this->container->view->render($res, 'oai_pmh/GetRecord.xml', [
-            'url' => $view_url,
-            'record' => $record
-          ]);
+      if ($params['verb'] === 'GetRecord') {
+        if (!\SRG\Util::get($params, 'identifier')) {
+          throw new \SRG\OAIException('No identifier given', 'badArgument', $view_url, 406);
         }
 
-        throw new \SRG\OAIException('Illegal OAI verb', 'badVerb', 406);
-      } catch(\SRG\OAIException $e) {
-        $res = $res->withStatus($e->getCode());
-        return $this->container->view->render($res, 'oai_pmh/Error.xml', [
+        if (!\SRG\Util::get($params, 'metadataPrefix')) {
+          throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $view_url, 406);
+        }
+
+        # TODO: implement and test cannotDisseminateFormat
+
+        $record = $repository->find_record($params['metadataPrefix'], $params['identifier']);
+
+        if (!$record) {
+          throw new \SRG\OAIException('record not found', 'idDoesNotExist', $view_url, 404);
+        }
+
+        return $this->container->view->render($res, 'oai_pmh/GetRecord.xml', [
           'url' => $view_url,
-          'verb' => $params['verb'],
-          'code' => $e->getOAIErrorCode(),
-          'message' => $e->getMessage()
+          'record' => $record
         ]);
       }
+
+      if ($params['verb'] === 'ListIdentifiers') {
+        $resumptionToken = \SRG\Util::get($params, 'resumptionToken');
+
+        if ($resumptionToken) {
+          $state = ResumptionToken::load_state($resumptionToken);
+          $params = array_merge($params, $state);
+        }
+
+        $prefix = \SRG\Util::get($params, 'metadataPrefix');
+        if (!$prefix) {
+          throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $view_url, 406);
+        }
+
+        # TODO: implement and test cannotDisseminateFormat
+
+        $criteria = [
+          'from' => \SRG\Util::get($params, 'from'),
+          'until' => \SRG\Util::get($params, 'until'),
+          'page' => \SRG\Util::get($params, 'page', 1)
+        ];
+        $search = $repository->find_records($prefix, $criteria);
+
+        $per_page = intval(getenv('SRG_PER_PAGE'));
+        $newResumptionToken = NULL;
+        if ($search['total'] <= $per_page) {
+          # one-page response set, nothing to do
+        } else {
+          if ($search['total'] > ($criteria['page'] * $per_page)) {
+            # this page is not enough, we need another one
+            $state = array_merge($criteria, [
+              'metadataPrefix' => \SRG\Util::get($params, 'metadataPrefix'),
+              'page' => \SRG\Util::get($params, 'page', 1) + 1
+            ]);
+            $newResumptionToken = ResumptionToken::save_state($state);
+          } else {
+            # this is the last page
+            $newResumptionToken = 'LAST';
+          }
+        }
+
+        return $this->container->view->render($res, 'oai_pmh/ListIdentifiers.xml', [
+          'url' => $view_url,
+          'records' => $search['records'],
+          'token' => $newResumptionToken,
+          'total' => $search['total'],
+          'expires_at' => \SRG\Util::to_oai_date((new \DateTime())->modify('+24 hours')),
+        ]);
+      }
+
+      throw new \SRG\OAIException(
+        'Value of the verb argument is not a legal OAI-PMH verb', 'badVerb', $view_url, 406
+      );
+      // if ($params['verb']) {
+      // } else {
+      //   throw new \SRG\OAIException(join(' ', [
+      //       'The request includes illegal arguments, is missing required',
+      //       'arguments, includes a repeated argument, or values for arguments',
+      //       'have an illegal syntax.'
+      //     ]),
+      //     'badArgument', $view_url,  406
+      //   );
+      // }
     }
 
     // protected function render($res, $template, $args = []) {
