@@ -166,6 +166,7 @@
         }
 
         # TODO: implement and test cannotDisseminateFormat
+        # TODO: implement failure on changed repository
 
         $criteria = [
           'from' => \SRG\Util::get($params, 'from'),
@@ -204,23 +205,7 @@
       throw new \SRG\OAIException(
         'Value of the verb argument is not a legal OAI-PMH verb', 'badVerb', $view_url, 406
       );
-      // if ($params['verb']) {
-      // } else {
-      //   throw new \SRG\OAIException(join(' ', [
-      //       'The request includes illegal arguments, is missing required',
-      //       'arguments, includes a repeated argument, or values for arguments',
-      //       'have an illegal syntax.'
-      //     ]),
-      //     'badArgument', $view_url,  406
-      //   );
-      // }
     }
-
-    // protected function render($res, $template, $args = []) {
-    //   $args['base_url'] = ;
-
-    //   return $this->container->view->render($res, $template, $args);
-    // }
 
     protected function params() {
       return $req->getQueryParams();

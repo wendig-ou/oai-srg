@@ -55,5 +55,5 @@ And navigate to http://localhost:3000 with your browser.
 
 ## Tests
 
-The test suits can be run with `bin/test.sh`. Make sure the test data server
-is running (`bin/serve-test-data.sh`).
+The test suits can be run with `bin/test.sh`. Make sure the test server and the
+data server are both running (`bin/test-server.sh` and `bin/serve-test-data.sh`).
