@@ -109,12 +109,12 @@
         throw new \SRG\OAIException('Metadata format not supported', 'cannotDisseminateFormat', $this->endpoint_url(), 200);
       }
 
-      if (!strptime($from, '%Y-%m-%d')) {
-        throw new \SRG\OAIException('"from" parameter is not a valid date', 'badAgrument', $this->endpoint_url(), 200);
+      if ($from && !strptime($from, '%Y-%m-%d')) {
+        throw new \SRG\OAIException('from parameter is not a valid date', 'badAgrument', $this->endpoint_url(), 200);
       }
 
-      if (!strptime($until, '%Y-%m-%d')) {
-        throw new \SRG\OAIException('"until" parameter is not a valid date', 'badAgrument', $this->endpoint_url(), 200);
+      if ($until && !strptime($until, '%Y-%m-%d')) {
+        throw new \SRG\OAIException('until parameter is not a valid date', 'badAgrument', $this->endpoint_url(), 200);
       }
 
       # TODO: implement failure on changed repository
