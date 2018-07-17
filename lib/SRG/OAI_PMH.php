@@ -52,7 +52,7 @@
 
     public function get_record($identifier, $prefix) {
       if (!$identifier) {
-        throw new \SRG\OAIException('No identifier given', 'badArgument', $this->endpoint_url(), 406);
+        throw new \SRG\OAIException('No identifier given', 'badArgument', $this->endpoint_url(), 200);
       }
 
       if (!$prefix) {

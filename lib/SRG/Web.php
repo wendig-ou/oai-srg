@@ -133,6 +133,12 @@
         );
       }
 
+      if ($params['verb'] === 'ListSets') {
+        throw new \SRG\OAIException(
+          'The repository does not support sets.', 'noSetHierarchy', $view_url, 406
+        );
+      }
+
       throw new \SRG\OAIException(
         'Value of the verb argument is not a legal OAI-PMH verb', 'badVerb', $view_url, 406
       );

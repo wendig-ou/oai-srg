@@ -88,6 +88,7 @@
 
   # the oai pmh routes (Identify, ListRecords etc)
   $app->get('/oai-pmh/{repository:.*}', '\SRG\Web:oai_pmh');
+  $app->post('/oai-pmh/{repository:.*}', '\SRG\Web:oai_pmh');
 
   $app->run();
 
