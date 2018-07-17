@@ -25,6 +25,14 @@
       return array_map($f, $s->fetchAll(\PDO::FETCH_COLUMN, 0));
     }
 
+    public function load_state($verb, $resumptionToken) {
+      return \SRG\ResumptionToken::load_state($this->id, $verb, $resumptionToken);
+    }
+
+    public function save_state($verb, $state) {
+      return \SRG\ResumptionToken::save_state($this->id, $verb, $state);
+    }
+
     public function error_list() {
       if ($this->errors) {
         return explode('|', $this->errors);
@@ -49,6 +57,11 @@
       return !$this->imported_at;
     }
 
+    public function can_disseminate($prefix) {
+      $prefixes = preg_split('/,/', $this->prefixes);
+      return in_array($prefix, $prefixes);
+    }
+
     public function record_count() {
       $tn = Record::$table_name;
       $s = \SRG::db()->prepare("SELECT count(*) AS c FROM $tn WHERE repository_id = ?");
@@ -62,8 +75,8 @@
       );
     }
 
-    public function find_records($prefix, $identifier, $criteria = []) {
-      return \SRG\Record::find_by_criteria($this->id, $prefix, $identifier, $criteria);
+    public function find_records($prefix, $page, $criteria = []) {
+      return \SRG\Record::find_by_criteria($this->id, $prefix, $page, $criteria);
     }
 
     public function delete_records() {

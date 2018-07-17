@@ -78,33 +78,9 @@
 
     public function oai_pmh($req, $res, $args) {
       $params = $req->getQueryParams();
+
       $url = \SRG\Util::build_url($args['repository']);
-      $view_url = getenv('SRG_BASE_URL') . '/oai-pmh/' . \SRG\Util::reposify($url);
-      $repository = \SRG\Repository::find_by_url($url);
-
-      if (!$repository) {
-        $message = [
-          "the repository '{$url}' was not found (because it was not initiated",
-          "or bacause mediation has been terminated"
-        ];
-        throw new \SRG\Exception(join(' ', $message), 502);
-      }
-      
-      if (!$repository->approved) {
-        $message = "the repository '{$url}' has not been approved for mediation (yet)";
-        throw new \SRG\Exception($message, 503);
-      }
-
-      if (!\SRG\Gateway::import($url)) {
-        $message = [
-          "the repository '{$url}' is not available at its designated location",
-          "and/or there were errors interacting with it and/or the retrieved",
-          "data didn't pass verification"
-        ];
-        throw new \SRG\Exception(join(' ', $message), 504);
-      }
-
-      $res = $res->withHeader('Content-type', 'text/xml');
+      $oai = new \SRG\OAI_PMH($url);
 
       if (!\SRG\Util::get($params, 'verb')) {
         throw new \SRG\OAIException(
@@ -112,94 +88,49 @@
         );
       }
 
+      $res = $res->withHeader('Content-type', 'text/xml');
+
       if ($params['verb'] === 'Identify') {
-        return $this->container->view->render($res, 'oai_pmh/Identify.xml', [
-          'url' => $view_url,
-          'admin_email' => getenv('SRG_ADMIN_EMAIL'),
-          'notes' => getenv('SRG_NOTES'),
-          'friends' => \Srg\Repository::friends(),
-          'repository' => $repository
-        ]);
+        return $this->container->view->render(
+          $res, 'oai_pmh/Identify.xml', $oai->identify()
+        );
       }
 
       if ($params['verb'] === 'ListMetadataFormats') {
-        return $this->container->view->render($res, 'oai_pmh/ListMetadataFormats.xml', [
-          'url' => $view_url,
-          'list_metadata_formats' => $repository->list_metadata_formats
-        ]);
+        return $this->container->view->render(
+          $res, 'oai_pmh/ListMetadataFormats.xml', $oai->list_metadata_formats()
+        );
       }
 
       if ($params['verb'] === 'GetRecord') {
-        if (!\SRG\Util::get($params, 'identifier')) {
-          throw new \SRG\OAIException('No identifier given', 'badArgument', $view_url, 406);
-        }
-
-        if (!\SRG\Util::get($params, 'metadataPrefix')) {
-          throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $view_url, 406);
-        }
-
-        # TODO: implement and test cannotDisseminateFormat
-
-        $record = $repository->find_record($params['metadataPrefix'], $params['identifier']);
-
-        if (!$record) {
-          throw new \SRG\OAIException('record not found', 'idDoesNotExist', $view_url, 404);
-        }
-
-        return $this->container->view->render($res, 'oai_pmh/GetRecord.xml', [
-          'url' => $view_url,
-          'record' => $record
-        ]);
+        return $this->container->view->render(
+          $res, 'oai_pmh/GetRecord.xml', $oai->get_record(
+            \SRG\Util::get($params, 'identifier'),
+            \SRG\Util::get($params, 'metadataPrefix')
+          )
+        );
       }
 
       if ($params['verb'] === 'ListIdentifiers') {
-        $resumptionToken = \SRG\Util::get($params, 'resumptionToken');
+        return $this->container->view->render(
+          $res, 'oai_pmh/ListIdentifiers.xml', $oai->list_identifiers(
+            \SRG\Util::get($params, 'resumptionToken'),
+            \SRG\Util::get($params, 'metadataPrefix'),
+            \SRG\Util::get($params, 'from'),
+            \SRG\Util::get($params, 'until')
+          )
+        );
+      }
 
-        if ($resumptionToken) {
-          $state = ResumptionToken::load_state($resumptionToken);
-          $params = array_merge($params, $state);
-        }
-
-        $prefix = \SRG\Util::get($params, 'metadataPrefix');
-        if (!$prefix) {
-          throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $view_url, 406);
-        }
-
-        # TODO: implement and test cannotDisseminateFormat
-        # TODO: implement failure on changed repository
-
-        $criteria = [
-          'from' => \SRG\Util::get($params, 'from'),
-          'until' => \SRG\Util::get($params, 'until'),
-          'page' => \SRG\Util::get($params, 'page', 1)
-        ];
-        $search = $repository->find_records($prefix, $criteria);
-
-        $per_page = intval(getenv('SRG_PER_PAGE'));
-        $newResumptionToken = NULL;
-        if ($search['total'] <= $per_page) {
-          # one-page response set, nothing to do
-        } else {
-          if ($search['total'] > ($criteria['page'] * $per_page)) {
-            # this page is not enough, we need another one
-            $state = array_merge($criteria, [
-              'metadataPrefix' => \SRG\Util::get($params, 'metadataPrefix'),
-              'page' => \SRG\Util::get($params, 'page', 1) + 1
-            ]);
-            $newResumptionToken = ResumptionToken::save_state($state);
-          } else {
-            # this is the last page
-            $newResumptionToken = 'LAST';
-          }
-        }
-
-        return $this->container->view->render($res, 'oai_pmh/ListIdentifiers.xml', [
-          'url' => $view_url,
-          'records' => $search['records'],
-          'token' => $newResumptionToken,
-          'total' => $search['total'],
-          'expires_at' => \SRG\Util::to_oai_date((new \DateTime())->modify('+24 hours')),
-        ]);
+      if ($params['verb'] === 'ListRecords') {
+        return $this->container->view->render(
+          $res, 'oai_pmh/ListRecords.xml', $oai->list_records(
+            \SRG\Util::get($params, 'resumptionToken'),
+            \SRG\Util::get($params, 'metadataPrefix'),
+            \SRG\Util::get($params, 'from'),
+            \SRG\Util::get($params, 'until')
+          )
+        );
       }
 
       throw new \SRG\OAIException(

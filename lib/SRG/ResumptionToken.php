@@ -3,11 +3,15 @@
 
   class ResumptionToken extends Model {
     static $table_name = 'resumption_tokens';
-    static $safe_columns = ['identifier', 'state', 'created_at'];
+    static $safe_columns = [
+      'identifier', 'state', 'created_at', 'repository_id', 'verb'
+    ];
 
-    public static function save_state($state) {
+    public static function save_state($repository_id, $verb, $state) {
       $identifier = static::generate_identifier();
       static::create([
+        'repository_id' => $repository_id,
+        'verb' => $verb,
         'identifier' => $identifier,
         'created_at' => \SRG\Util::to_db_date('now'),
         'state' => json_encode($state)
@@ -15,10 +19,16 @@
       return $identifier;
     }
 
-    public static function load_state($identifier) {
-      $rt = static::find_by('identifier', $identifier);
-      $state = json_decode($rt->state, TRUE);
-      return $state;
+    public static function load_state($repository_id, $verb, $identifier) {
+      $tn = static::$table_name;
+      $s = \SRG::db()->prepare("SELECT * FROM $tn WHERE repository_id = ? AND verb = ? AND identifier = ?");
+      $s->execute([$repository_id, $verb, $identifier]);
+
+      if ($s->rowCount()) {
+        $s->setFetchMode(\PDO::FETCH_CLASS, get_called_class());
+        $rt = $s->fetch();
+        return json_decode($rt->state, TRUE);
+      }
     }
 
     public static function generate_identifier() {

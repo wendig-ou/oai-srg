@@ -30,7 +30,7 @@
       return $s->fetchObject(get_called_class());
     }
 
-    public static function find_by_criteria($repository_id, $prefix, $criteria = []) {
+    public static function find_by_criteria($repository_id, $prefix, $page, $criteria = []) {
       $where = ['repository_id = ?', 'prefix = ?'];
       $params = [$repository_id, $prefix];
 
@@ -46,7 +46,7 @@
 
       $tn = static::$table_name;
       $per_page = intval(getenv('SRG_PER_PAGE'));
-      $offset = ($criteria['page'] - 1) * $per_page;
+      $offset = ($page - 1) * $per_page;
       $query = "SELECT * FROM $tn WHERE " . join(' AND ', $where) . " LIMIT $per_page OFFSET $offset";
       $count_query = "SELECT count(*) FROM $tn WHERE " . join(' AND ', $where);
 

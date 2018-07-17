@@ -5,18 +5,23 @@
          http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd">
   <responseDate>{{now}}</responseDate>
   <request
-    verb="ListIdentifiers"
+    verb="ListRecords"
     metadataPrefix="{{prefix}}"
     {% if from %}from="{{from}}"{% endif %}
     {% if until %}until="{{until}}"{% endif %}
     {% if oldToken %}resumptionToken="{{oldToken}}"{% endif %}
   >{{url}}</request>
-  <ListIdentifiers>
+  <ListRecords>
     {% for record in records %}
-      <header>  
-        <identifier>{{record.identifier}}</identifier>
-        <datestamp>{{record.modified_at}}</datestamp>
-      </header>
+      <record>
+        <header>  
+          <identifier>{{record.identifier}}</identifier>
+          <datestamp>{{record.modified_at}}</datestamp>
+        </header>
+        <metadata>
+          {{record.payload | raw}}
+        </metadata>
+      </record>
     {% endfor %}
     {% if newToken %}
       {% if newToken == 'LAST' %}
@@ -27,5 +32,5 @@
         </resumptionToken>
       {% endif %}
     {% endif %}
-  </ListIdentifiers>
+  </ListRecords>
 </OAI-PMH>
