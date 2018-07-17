@@ -52,21 +52,21 @@
 
     public function get_record($identifier, $prefix) {
       if (!$identifier) {
-        throw new \SRG\OAIException('No identifier given', 'badArgument', $this->endpoint_url(), 200);
+        throw new \SRG\OAIException('No identifier given', 'badArgument', $this->endpoint_url());
       }
 
       if (!$prefix) {
-        throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $this->endpoint_url(), 200);
+        throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $this->endpoint_url());
       }
 
       if (!$this->repository->can_disseminate($prefix)) {
-        throw new \SRG\OAIException('Metadata format not supported', 'cannotDisseminateFormat', $this->endpoint_url(), 200);
+        throw new \SRG\OAIException('Metadata format not supported', 'cannotDisseminateFormat', $this->endpoint_url());
       }
 
       $record = $this->repository->find_record($prefix, $identifier);
 
       if (!$record) {
-        throw new \SRG\OAIException('record not found', 'idDoesNotExist', $this->endpoint_url(), 200);
+        throw new \SRG\OAIException('record not found', 'idDoesNotExist', $this->endpoint_url());
       }
 
       return [
@@ -91,7 +91,7 @@
 
         if (!$state) {
           throw new \SRG\OAIException(
-            'The value of the resumptionToken argument is invalid or expired', 'badResumptionToken', $this->endpoint_url(), 200
+            'The value of the resumptionToken argument is invalid or expired', 'badResumptionToken', $this->endpoint_url()
           );
         }
 
@@ -102,25 +102,29 @@
       }
 
       if (!$prefix) {
-        throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $this->endpoint_url(), 200);
+        throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $this->endpoint_url());
       }
 
       if (!$this->repository->can_disseminate($prefix)) {
-        throw new \SRG\OAIException('Metadata format not supported', 'cannotDisseminateFormat', $this->endpoint_url(), 200);
+        throw new \SRG\OAIException('Metadata format not supported', 'cannotDisseminateFormat', $this->endpoint_url());
       }
 
-      if ($from && !strptime($from, '%Y-%m-%d')) {
-        throw new \SRG\OAIException('from parameter is not a valid date', 'badAgrument', $this->endpoint_url(), 200);
+      if (!\SRG\Util::validateDate($from)) {
+        throw new \SRG\OAIException('from parameter is not a valid date', 'badAgrument', $this->endpoint_url());
       }
 
-      if ($until && !strptime($until, '%Y-%m-%d')) {
-        throw new \SRG\OAIException('until parameter is not a valid date', 'badAgrument', $this->endpoint_url(), 200);
+      if (!\SRG\Util::validateDate($until)) {
+        throw new \SRG\OAIException('until parameter is not a valid date', 'badAgrument', $this->endpoint_url());
       }
 
       # TODO: implement failure on changed repository
 
       $criteria = ['from' => $from, 'until' => $until];
       $search = $this->repository->find_records($prefix, $page, $criteria);
+
+      if ($search['total'] == 0) {
+        throw new \SRG\OAIException('No records match the from, until and metadataPrefix combination', 'noRecordsMatch', $this->endpoint_url());
+      }
 
       $per_page = intval(getenv('SRG_PER_PAGE'));
       $newResumptionToken = NULL;

@@ -34,6 +34,13 @@
       return $date->format('Y-m-d\TH:i:s\Z');
     }
 
+    public static function validateDate($date, $format = 'Y-m-d') {
+      if (!$date) {return TRUE;}
+
+      $d = \DateTime::createFromFormat($format, $date);
+      return $d && $d->format($format) === $date;
+    }
+
     public static function build_url($uri) {
       if (preg_match('/^([^\/:]+)(:\d+)?(.*)$/', $uri, $matches)) {
         $host = $matches[1];

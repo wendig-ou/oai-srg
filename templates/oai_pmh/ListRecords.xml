@@ -27,9 +27,10 @@
       {% if newToken == 'LAST' %}
         <resumptionToken />
       {% else %}
-        <resumptionToken expirationDate="{{expires_at}}" completeListSize="{{total}}">
-          {{newToken}}
-        </resumptionToken>
+        <resumptionToken
+          expirationDate="{{expires_at}}"
+          completeListSize="{{total}}"
+        >{{newToken}}</resumptionToken>
       {% endif %}
     {% endif %}
   </ListRecords>
