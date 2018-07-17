@@ -86,7 +86,7 @@
       }
 
       $url = \SRG\Util::build_url($args['repository']);
-      $oai = new \SRG\OAI_PMH($url);
+      $oai = new \SRG\OaiPmh($url);
 
       if (!\SRG\Util::get($params, 'verb')) {
         throw new \SRG\OAIException(

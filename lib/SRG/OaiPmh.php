@@ -1,7 +1,7 @@
 <?php 
   namespace SRG;
 
-  class OAI_PMH {
+  class OaiPmh {
     public function __construct($url) {
       $this->url = $url;
       $this->repository = \SRG\Repository::find_by_url($this->url);
