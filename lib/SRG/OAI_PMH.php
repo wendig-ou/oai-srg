@@ -110,11 +110,11 @@
       }
 
       if (!\SRG\Util::validateDate($from)) {
-        throw new \SRG\OAIException('from parameter is not a valid date', 'badAgrument', $this->endpoint_url());
+        throw new \SRG\OAIException('from parameter is not a valid date', 'badArgument', $this->endpoint_url());
       }
 
       if (!\SRG\Util::validateDate($until)) {
-        throw new \SRG\OAIException('until parameter is not a valid date', 'badAgrument', $this->endpoint_url());
+        throw new \SRG\OAIException('until parameter is not a valid date', 'badArgument', $this->endpoint_url());
       }
 
       # TODO: implement failure on changed repository
