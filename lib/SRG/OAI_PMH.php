@@ -56,17 +56,17 @@
       }
 
       if (!$prefix) {
-        throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $this->endpoint_url(), 406);
+        throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $this->endpoint_url(), 200);
       }
 
       if (!$this->repository->can_disseminate($prefix)) {
-        throw new \SRG\OAIException('Metadata format not supported', 'cannotDisseminateFormat', $this->endpoint_url(), 406);
+        throw new \SRG\OAIException('Metadata format not supported', 'cannotDisseminateFormat', $this->endpoint_url(), 200);
       }
 
       $record = $this->repository->find_record($prefix, $identifier);
 
       if (!$record) {
-        throw new \SRG\OAIException('record not found', 'idDoesNotExist', $this->endpoint_url(), 404);
+        throw new \SRG\OAIException('record not found', 'idDoesNotExist', $this->endpoint_url(), 200);
       }
 
       return [
@@ -91,7 +91,7 @@
 
         if (!$state) {
           throw new \SRG\OAIException(
-            'The value of the resumptionToken argument is invalid or expired', 'badResumptionToken', $this->endpoint_url(), 406
+            'The value of the resumptionToken argument is invalid or expired', 'badResumptionToken', $this->endpoint_url(), 200
           );
         }
 
@@ -102,11 +102,19 @@
       }
 
       if (!$prefix) {
-        throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $this->endpoint_url(), 406);
+        throw new \SRG\OAIException('No metadata prefix given', 'badArgument', $this->endpoint_url(), 200);
       }
 
       if (!$this->repository->can_disseminate($prefix)) {
-        throw new \SRG\OAIException('Metadata format not supported', 'cannotDisseminateFormat', $this->endpoint_url(), 406);
+        throw new \SRG\OAIException('Metadata format not supported', 'cannotDisseminateFormat', $this->endpoint_url(), 200);
+      }
+
+      if (!strptime($from, '%Y-%m-%d')) {
+        throw new \SRG\OAIException('"from" parameter is not a valid date', 'badAgrument', $this->endpoint_url(), 200);
+      }
+
+      if (!strptime($until, '%Y-%m-%d')) {
+        throw new \SRG\OAIException('"until" parameter is not a valid date', 'badAgrument', $this->endpoint_url(), 200);
       }
 
       # TODO: implement failure on changed repository

@@ -77,14 +77,20 @@
     }
 
     public function oai_pmh($req, $res, $args) {
-      $params = $req->getQueryParams();
+      $params = [];
+      if ($req->getMethod() == 'GET') {
+        $params = $req->getQueryParams();
+      }
+      if ($req->getMethod() == 'POST') {
+        $params = $req->getParsedBody();
+      }
 
       $url = \SRG\Util::build_url($args['repository']);
       $oai = new \SRG\OAI_PMH($url);
 
       if (!\SRG\Util::get($params, 'verb')) {
         throw new \SRG\OAIException(
-          'no OAI PMH verb given', 'badVerb', $view_url, 406
+          'no OAI PMH verb given', 'badVerb', $view_url, 200
         );
       }
 
@@ -135,12 +141,12 @@
 
       if ($params['verb'] === 'ListSets') {
         throw new \SRG\OAIException(
-          'The repository does not support sets.', 'noSetHierarchy', $view_url, 406
+          'The repository does not support sets.', 'noSetHierarchy', $view_url, 200
         );
       }
 
       throw new \SRG\OAIException(
-        'Value of the verb argument is not a legal OAI-PMH verb', 'badVerb', $view_url, 406
+        'Value of the verb argument is not a legal OAI-PMH verb', 'badVerb', $view_url, 200
       );
     }
 
