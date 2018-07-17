@@ -26,11 +26,11 @@ class OaiPmhCest
         \SRG\Gateway::approve($url);
 
         $I->sendGet('/oai-pmh/localhost:3002/repository.01.xml', []);
-        $I->seeResponseCodeIs(406);
+        $I->seeResponseCodeIs(200);
         $I->seeResponseContains('badVerb');
 
         $I->sendGet('/oai-pmh/localhost:3002/repository.01.xml', ['verb' => 'Wrong']);
-        $I->seeResponseCodeIs(406);
+        $I->seeResponseCodeIs(200);
         $I->seeResponseContains('badVerb');
 
         $I->sendGet('/oai-pmh/localhost:3002/repository.01.xml', ['verb' => 'Identify']);
@@ -42,7 +42,7 @@ class OaiPmhCest
         $I->seeResponseContains('<metadataPrefix>oai_rfc1807</metadataPrefix>');
 
         $I->sendGet('/oai-pmh/localhost:3002/repository.01.xml', ['verb' => 'GetRecord']);
-        $I->seeResponseCodeIs(406);
+        $I->seeResponseCodeIs(200);
         $I->seeResponseContains('badArgument');
         $I->seeResponseContains('No identifier given');
 
@@ -50,7 +50,7 @@ class OaiPmhCest
             'verb' => 'GetRecord',
             'identifier' => 'oai:arXiv:cs/0112017'
         ]);
-        $I->seeResponseCodeIs(406);
+        $I->seeResponseCodeIs(200);
         $I->seeResponseContains('badArgument');
         $I->seeResponseContains('No metadata prefix given');
 
@@ -59,7 +59,7 @@ class OaiPmhCest
             'identifier' => 'doesnt-exist',
             'metadataPrefix' => 'oai_dc'
         ]);
-        $I->seeResponseCodeIs(404);
+        $I->seeResponseCodeIs(200);
         $I->seeResponseContains('idDoesNotExist');
         $I->seeResponseContains('record not found');
 
@@ -72,7 +72,7 @@ class OaiPmhCest
         $I->seeResponseContains('Using Structural Metadata to Localize Experience');
 
         $I->sendGet('/oai-pmh/localhost:3002/repository.01.xml', ['verb' => 'ListIdentifiers']);
-        $I->seeResponseCodeIs(406);
+        $I->seeResponseCodeIs(200);
         $I->seeResponseContains('badArgument');
         $I->seeResponseContains('No metadata prefix given');
 

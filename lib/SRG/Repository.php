@@ -26,7 +26,10 @@
     }
 
     public function load_state($verb, $resumptionToken) {
-      return \SRG\ResumptionToken::load_state($this->id, $verb, $resumptionToken);
+      $data = \SRG\ResumptionToken::load_state($this->id, $verb, $resumptionToken);
+      if ($data && $data['created_at'] > $this->modified_at) {
+        return $data['state'];
+      }
     }
 
     public function save_state($verb, $state) {

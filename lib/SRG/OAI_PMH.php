@@ -31,6 +31,9 @@
         ];
         throw new \SRG\Exception(join(' ', $message), 504);
       }
+
+      # we reload the repository because the import might have changed it
+      $this->repository = \SRG\Repository::find_by_url($this->url);
     }
 
     public function identify() {
@@ -91,7 +94,7 @@
 
         if (!$state) {
           throw new \SRG\OAIException(
-            'The value of the resumptionToken argument is invalid or expired', 'badResumptionToken', $this->endpoint_url()
+            'The value of the resumptionToken argument is invalid or expired. Also, the static repository might have changed after this resumptionToken was issued', 'badResumptionToken', $this->endpoint_url()
           );
         }
 
@@ -116,8 +119,6 @@
       if (!\SRG\Util::validateDate($until)) {
         throw new \SRG\OAIException('until parameter is not a valid date', 'badArgument', $this->endpoint_url());
       }
-
-      # TODO: implement failure on changed repository
 
       $criteria = ['from' => $from, 'until' => $until];
       $search = $this->repository->find_records($prefix, $page, $criteria);

@@ -33,14 +33,14 @@ class ResumptionTokenCest
 
     public function testSerialization(UnitTester $I) {
         $original_state = ['x' => 12, 'y' => [1,2,3]];
-        $identifier = \SRG\ResumptionToken::save_state($original_state);
+        $identifier = \SRG\ResumptionToken::save_state(1, 'ListRecords', $original_state);
         $I->seeInDatabase('resumption_tokens', [
             'identifier' => $identifier,
             'created_at <=' => \SRG\Util::to_db_date('now'),
             'created_at >' => \SRG\Util::to_db_date('yesterday')
         ]);
 
-        $retrieved_state = \SRG\ResumptionToken::load_state($identifier);
+        $retrieved_state = \SRG\ResumptionToken::load_state(1, 'ListRecords', $identifier)['state'];
         $I->assertEquals($original_state, $retrieved_state);
     }
 }

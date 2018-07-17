@@ -27,7 +27,10 @@
       if ($s->rowCount()) {
         $s->setFetchMode(\PDO::FETCH_CLASS, get_called_class());
         $rt = $s->fetch();
-        return json_decode($rt->state, TRUE);
+        return [
+          'state' => json_decode($rt->state, TRUE),
+          'created_at' => $rt->created_at
+        ];
       }
     }
 
