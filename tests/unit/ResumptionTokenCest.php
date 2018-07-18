@@ -12,13 +12,15 @@ class ResumptionTokenCest
 
     // tests
     public function testCleanup(UnitTester $I) {
+        $date = (new \DateTime())->modify('-3 hours');
         $I->haveInDatabase('resumption_tokens', [
             'identifier' => '1234',
-            'created_at' => (new \DateTime())->modify('-25 hours')->format('Y-m-d H:i:s')
+            'created_at' => \SRG\Util::to_db_date($date)
         ]);
+        $date = (new \DateTime())->modify('-1 hours');
         $I->haveInDatabase('resumption_tokens', [
             'identifier' => '5678',
-            'created_at' => (new \DateTime())->modify('-23 hours')->format('Y-m-d H:i:s')
+            'created_at' => \SRG\Util::to_db_date($date)
         ]);
         $I->haveInDatabase('resumption_tokens', [
             'identifier' => '9999',

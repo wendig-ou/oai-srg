@@ -41,7 +41,7 @@
 
     public static function cleanup() {
       $tn = static::$table_name;
-      $ts = \SRG\Util::to_db_date((new \DateTime())->modify('-24 hours'));
+      $ts = \SRG\Util::to_db_date((new \DateTime())->modify('-2 hours'));
       $s = \SRG::db()->prepare("DELETE FROM $tn WHERE created_at < ? OR created_at IS NULL");
       $s->execute([$ts]);
     }
