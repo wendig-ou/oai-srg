@@ -21,160 +21,165 @@
     on the right.
   </p>
 
-  <table class="repositories table table-bordered table-striped">
-    <tr>
-      <th>Url</th>
-      <th>
-        Status
-        {% if user %}
-          <br />
-          <small>approved / verified</small>
-        {% endif %}
-      </th>
-      <th class="text-right"></th>
-    </tr>
-    {% for repository in repositories %}
+  {% if repositories | length > 0 %}
+    <table class="repositories table table-bordered table-striped">
       <tr>
-        <td>
-          {% if repository.ready() %}
-            <small class="d-block float-right">
-              <a
-                data-toggle="collapse"
-                href="#usage-{{repository.id}}"
-                aria-expanded="false"
-                aria-controls="usage-{{repository.id}}"
-              >show examples</a>
-            </small>
-          {% endif %}
-          {% if not repository.verified and repository.verified_at %}
-            <small class="d-block float-right">
-              <a
-                data-toggle="collapse"
-                href="#verification-results-{{repository.id}}"
-                aria-expanded="false"
-                aria-controls="verification-results-{{repository.id}}"
-              >verification results</a>
-            </small>
-          {% endif %}
-
-          {% if repository.name %}
-            <div class="font-weight-bold">{{repository.name}}</div>
-            <small>
-              {{repository.url}}
-            </small>
-          {% else %}
-            <div class="font-weight-bold">
-              {{repository.url}}
-            </div>
-          {% endif %}
-          
-          {% if repository.verified %}
-            <small class="clear d-block">
-              <strong>{{repository.record_count()}}</strong> records,
-              last modified at: <strong>{{repository.modified_at}}</strong>
-            </small>
-          {% endif %}
-
-          <div class="collapse" id="verification-results-{{repository.id}}">
-            <hr />
-
-            {% if repository.error_list | length > 0 %}
-              <small class="d-block">
-                Errors<br />
-                  {% for error in repository.error_list %}
-                    <code>{{error}}</code><br />
-                  {% endfor %}
-                </ul>
-              </small>
-            {% endif %}
-
-            {% if repository.warning_list | length > 0 %}
-              <small class="d-block">
-                Warnings<br />
-                <ul>
-                  {% for warning in repository.warning_list %}
-                    <li>{{warning}}</li>
-                  {% endfor %}
-                </ul>
-              </small>
-            {% endif %}
-          </div>
-
-          <div class="collapse" id="usage-{{repository.id}}">
-            <hr />
-
-            <small class="d-block">
-              OAI PMH <em>Identify</em><br />
-              <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=Identify</code>
-            </small>
-
-            <small class="d-block">
-              OAI PMH <em>List metadata formats</em><br />
-              <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListMetadataFormats</code>
-            </small>
-
-            <small class="d-block">
-              OAI PMH <em>List identifiers</em><br />
-              <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListIdentifiers</code>
-            </small>
-
-            <small class="d-block">
-              OAI PMH <em>List records</em><br />
-              <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListRecords&metadataPrefix=dc</code>
-            </small>
-
-            <small class="d-block">
-              OAI PMH <em>Get record</em><br />
-              <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&metadataPrefix=dc</code>
-            </small>
-          </div>
-        </td>
-        <td>
+        <th>Url</th>
+        <th>
+          Status
           {% if user %}
-            {% if repository.approved %}
-              <i class="fa fa-check text-success"></i>
-            {% else %}
-              <i class="fa fa-times-circle text-danger"></i>
+            <br />
+            <small>approved / verified</small>
+          {% endif %}
+        </th>
+        <th class="text-right"></th>
+      </tr>
+      {% for repository in repositories %}
+        <tr>
+          <td>
+            {% if repository.ready() %}
+              <small class="d-block float-right">
+                <a
+                  data-toggle="collapse"
+                  href="#usage-{{repository.id}}"
+                  aria-expanded="false"
+                  aria-controls="usage-{{repository.id}}"
+                >show examples</a>
+              </small>
             {% endif %}
-            /
+            {% if not repository.verified and repository.verified_at %}
+              <small class="d-block float-right">
+                <a
+                  data-toggle="collapse"
+                  href="#verification-results-{{repository.id}}"
+                  aria-expanded="false"
+                  aria-controls="verification-results-{{repository.id}}"
+                >verification results</a>
+              </small>
+            {% endif %}
+
+            {% if repository.name %}
+              <div class="font-weight-bold">{{repository.name}}</div>
+              <small>
+                {{repository.url}}
+              </small>
+            {% else %}
+              <div class="font-weight-bold">
+                {{repository.url}}
+              </div>
+            {% endif %}
+            
             {% if repository.verified %}
-              <i class="fa fa-check text-success"></i>
-            {% else %}
-              <i class="fa fa-times-circle text-danger"></i>
+              <small class="clear d-block">
+                <strong>{{repository.record_count()}}</strong> records,
+                last modified at: <strong>{{repository.modified_at}}</strong>
+              </small>
             {% endif %}
-          {% endif %}
 
-          {% if repository.verified_at %}
-            <small class="d-block">
-              last verified at <strong>{{repository.verified_at}}</strong>
-            </small>
-          {% endif %}
-        </td>
-        <td class="text-right">
-          {% if user %}
-            {% if not repository.approved %}
-              <a class="d-block" href="{{base_url}}/gateway?approve={{repository.url}}">
-                approve <i class="fa fa-thumbs-up"></i>
-              </a>
+            <div class="collapse" id="verification-results-{{repository.id}}">
+              <hr />
+
+              {% if repository.error_list | length > 0 %}
+                <small class="d-block">
+                  Errors<br />
+                    {% for error in repository.error_list %}
+                      <code>{{error}}</code><br />
+                    {% endfor %}
+                  </ul>
+                </small>
+              {% endif %}
+
+              {% if repository.warning_list | length > 0 %}
+                <small class="d-block">
+                  Warnings<br />
+                  <ul>
+                    {% for warning in repository.warning_list %}
+                      <li>{{warning}}</li>
+                    {% endfor %}
+                  </ul>
+                </small>
+              {% endif %}
+            </div>
+
+            <div class="collapse" id="usage-{{repository.id}}">
+              <hr />
+
+              <small class="d-block">
+                OAI PMH <em>Identify</em><br />
+                <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=Identify</code>
+              </small>
+
+              <small class="d-block">
+                OAI PMH <em>List metadata formats</em><br />
+                <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListMetadataFormats</code>
+              </small>
+
+              <small class="d-block">
+                OAI PMH <em>List identifiers</em><br />
+                <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListIdentifiers</code>
+              </small>
+
+              <small class="d-block">
+                OAI PMH <em>List records</em><br />
+                <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListRecords&metadataPrefix=dc</code>
+              </small>
+
+              <small class="d-block">
+                OAI PMH <em>Get record</em><br />
+                <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&metadataPrefix=dc</code>
+              </small>
+            </div>
+          </td>
+          <td>
+            {% if user %}
+              {% if repository.approved %}
+                <i class="fa fa-check text-success"></i>
+              {% else %}
+                <i class="fa fa-times-circle text-danger"></i>
+              {% endif %}
+              /
+              {% if repository.verified %}
+                <i class="fa fa-check text-success"></i>
+              {% else %}
+                <i class="fa fa-times-circle text-danger"></i>
+              {% endif %}
             {% endif %}
-            <a class="d-block" href="{{base_url}}/gateway?import={{repository.url}}">
-              verify <i class="fa fa-check"></i>
-            </a>
+
+            {% if repository.verified_at %}
+              <small class="d-block">
+                last verified at <strong>{{repository.verified_at}}</strong>
+              </small>
+            {% endif %}
+          </td>
+          <td class="text-right">
+            {% if user %}
+              {% if not repository.approved %}
+                <a class="d-block" href="{{base_url}}/gateway?approve={{repository.url}}">
+                  approve <i class="fa fa-thumbs-up"></i>
+                </a>
+              {% endif %}
+              <a class="d-block" href="{{base_url}}/gateway?import={{repository.url}}">
+                verify <i class="fa fa-check"></i>
+              </a>
+
+              {% if repository.approved and repository.verified %}
+                <a class="d-block" href="{{base_url}}/gateway?terminate-unilaterally={{repository.url}}">
+                  force termination <i class="fa fa-exclamation-circle"></i>
+                </a>
+              {% endif %}
+            {% endif %}
 
             {% if repository.approved and repository.verified %}
-              <a class="d-block" href="{{base_url}}/gateway?terminate-unilaterally={{repository.url}}">
-                force termination <i class="fa fa-exclamation-circle"></i>
+              <a class="d-block" href="{{base_url}}/gateway?terminate={{repository.url}}">
+                request termination <i class="fa fa-stop-circle"></i>
               </a>
             {% endif %}
-          {% endif %}
-
-          {% if repository.approved and repository.verified %}
-            <a class="d-block" href="{{base_url}}/gateway?terminate={{repository.url}}">
-              request termination <i class="fa fa-stop-circle"></i>
-            </a>
-          {% endif %}
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+  There are no repositories registered yet. Add one by clicking the plus icon
+  in the top right corner.
+  {% endif %}
 {% endblock %}

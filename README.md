@@ -2,15 +2,16 @@
 
 * checkout the repo to within apache's DocumentRoot
 * copy .env.sample to .env and make changes within the file to reflect your
-  deployment
+  deployment. These are just environment variables, you may also configure them
+  with your web-server's environment, e.g. with Apache's SetEnv
 * run `composer install --no-dev`
 * run `composer dump-autoload`
 * run the setup routine: `php bin/setup.php` to create the database structure
 
 ## Development
 
-To get started developing, first install VirtualBox and Vagrant and git. Then
-make sure that the guest additions plugin is installed by running
+To get started developing, first install VirtualBox, Vagrant and git. Then make
+sure the guest additions plugin is installed by running
 
 ~~~ bash
 vagrant plugin install vagrant-vbguest
@@ -39,7 +40,8 @@ session within the VM
 vagrant ssh
 ~~~
 
-You find the current directory at `/vagrant` so you will probably want to
+Within the VM, the current directory is mounted at `/vagrant` so you will
+probably want to
 
 ~~~ bash
 cd /vagrant

@@ -7,6 +7,8 @@
 
     <title>OSR {% block title %}{% endblock %}</title>
 
+    <link rel="icon" href="{{favicon_url}}" />
+
     <!-- <link rel="stylesheet" type="text/css" href="{{base_url}}/bootstrap.min.css" /> -->
     <!-- <link rel="stylesheet" type="text/css" href="{{base_url}}/bootstrap-journal.min.css" /> -->
     <link rel="stylesheet" type="text/css" href="{{base_url}}/bootstrap-materia.min.css" />
@@ -19,8 +21,13 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" href="#" style="font-size: 2em;">
-        <i class="fa fa-sitemap"></i>
-        OAI PMH Static Repository Gateway
+        {% if organization and organization_logo_url %}
+          <img src="{{organization_logo_url}}" class="srg-logo d-block float-left mr-2" />
+          {{organization}}<br />
+          <small>OAI PMH Static Repository Gateway</small>
+        {% else %}
+          OAI PMH Static Repository Gateway
+        {% endif %}
       </a>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
@@ -48,7 +55,7 @@
           >{{organization}}</a>
           <br />
         {% endif %}
-        <small class="pt-5">
+        <small class="d-block">
           implementation by
           <a href="https://wendig.io" target="_blank" rel="noopener">Wendig</a>
         </small>

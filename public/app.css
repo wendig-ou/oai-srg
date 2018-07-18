@@ -9,3 +9,11 @@ div.main {
 table.repositories th:nth-child(1) {
   width: 650px;
 }
+
+a.navbar-brand {
+  line-height: 1.1em;
+}
+
+img.srg-logo {
+  height: 60px;
+}
