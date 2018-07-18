@@ -117,8 +117,7 @@
     }
 
     public function not_modified() {
-      $result = $this->status == 304;
-      return $result;
+      return $this->status == 304;
     }
 
     public function modified() {

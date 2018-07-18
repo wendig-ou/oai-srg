@@ -17,7 +17,10 @@
         $date = new \DateTime($date);
       }
       
-      $date->setTimezone(new \DateTimeZone("UTC"));
+      # We pull this from the db where we only write utc timestamps (but without
+      # the timezone information). Therefore we don't convert them to utc (a
+      # second time)
+      // $date->setTimezone(new \DateTimeZone("UTC"));
       # RFC 7231
       return $date->format('D, d M Y H:i:s e');
     }
