@@ -55,7 +55,17 @@ probably want to
 cd /vagrant
 ~~~
 
-From there, to start the development server, run 
+From there, install the dependencies including development and test:
+
+~~~
+composer install
+composer dump-autoload
+~~~
+
+Then, create databases for the development and test environment as defined in
+`.env.development` and `.env.test` and/or modify those files accordingly.
+
+To start the development server, run
 
 ~~~ bash
 bin/dev.sh

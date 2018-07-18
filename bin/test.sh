@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-if [ -d /vagrant ]; then
+if [ -d /vagrant ] || [ -d /c ] ; then
   export APP_ENV=development
   php vendor/bin/codecept run
 else
