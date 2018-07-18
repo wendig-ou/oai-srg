@@ -7,8 +7,8 @@
 
     <title>OSR {% block title %}{% endblock %}</title>
 
-    <!-- <link rel="stylesheet" type="text/css" href="bootstrap.min.css" /> -->
-    <!-- <link rel="stylesheet" type="text/css" href="bootstrap-journal.min.css" /> -->
+    <!-- <link rel="stylesheet" type="text/css" href="{{base_url}}/bootstrap.min.css" /> -->
+    <!-- <link rel="stylesheet" type="text/css" href="{{base_url}}/bootstrap-journal.min.css" /> -->
     <link rel="stylesheet" type="text/css" href="{{base_url}}/bootstrap-materia.min.css" />
     <link rel="stylesheet" type="text/css" href="{{base_url}}/fontawesome-all.min.css" />
     <link rel="stylesheet" type="text/css" href="{{base_url}}/app.css" />
@@ -41,11 +41,13 @@
 
     <div class="p-5 mt-5 border-top text-center">
       <p class="lead">
-        service provided by
-        <br />
-        <a href="http://www.hab.de" target="_blank" rel="noopener"
-        >Herzog August Bibliothek Wolfenbüttel</a>
-        <br />
+        {% if organization and organization_url %}
+          service provided by
+          <br />
+          <a href="{{organization_url}}" target="_blank" rel="noopener"
+          >{{organization}}</a>
+          <br />
+        {% endif %}
         <small class="pt-5">
           implementation by
           <a href="https://wendig.io" target="_blank" rel="noopener">Wendig</a>

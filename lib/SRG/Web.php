@@ -163,6 +163,8 @@
       $twig_env->addGlobal('base_url', getenv('SRG_BASE_URL'));
       $twig_env->addGlobal('user', \SRG::auth()->user());
       $twig_env->addGlobal('now', \SRG\Util::to_oai_date('now'));
+      $twig_env->addGlobal('organization', getenv('SRG_ORGANIZATION'));
+      $twig_env->addGlobal('organization_url', getenv('SRG_ORGANIZATION_URL'));
 
       $filter = new \Twig_SimpleFilter('reposify', function($s) {return \SRG\Util::reposify($s);});
       $this->container->view->getEnvironment()->addFilter($filter);
