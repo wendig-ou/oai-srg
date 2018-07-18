@@ -16,6 +16,8 @@
       if (! $date instanceof \DateTime) {
         $date = new \DateTime($date);
       }
+      
+      $date->setTimezone(new \DateTimeZone("UTC"));
       # RFC 7231
       return $date->format('D, d M Y H:i:s e');
     }
@@ -24,6 +26,8 @@
       if (! $date instanceof \DateTime) {
         $date = new \DateTime($date);
       }
+
+      $date->setTimezone(new \DateTimeZone("UTC"));
       return $date->format('Y-m-d H:i:s');
     }
 
@@ -31,6 +35,8 @@
       if (! $date instanceof \DateTime) {
         $date = new \DateTime($date);
       }
+
+      $date->setTimezone(new \DateTimeZone("UTC"));
       return $date->format('Y-m-d\TH:i:s\Z');
     }
 

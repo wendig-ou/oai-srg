@@ -8,6 +8,14 @@
 * run `composer dump-autoload`
 * run the setup routine: `php bin/setup.php` to create the database structure
 
+Depending on your environment, server performance and the size of your data
+sets, you might have to change some resource limits for php, e.g.
+
+~~~
+max_execution_time = 300
+memory_limit = 256M
+~~~
+
 ## Development
 
 To get started developing, first install VirtualBox, Vagrant and git. Then make
