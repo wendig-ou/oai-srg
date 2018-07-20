@@ -90,7 +90,7 @@
 
       if (!\SRG\Util::get($params, 'verb')) {
         throw new \SRG\OAIException(
-          'no OAI PMH verb given', 'badVerb', $view_url, 200
+          'no OAI PMH verb given', 'badVerb', $oai->endpoint_url(), 200
         );
       }
 
@@ -141,12 +141,12 @@
 
       if ($params['verb'] === 'ListSets') {
         throw new \SRG\OAIException(
-          'The repository does not support sets.', 'noSetHierarchy', $view_url, 200
+          'The repository does not support sets.', 'noSetHierarchy', $oai->endpoint_url(), 200
         );
       }
 
       throw new \SRG\OAIException(
-        'Value of the verb argument is not a legal OAI-PMH verb', 'badVerb', $view_url, 200
+        'Value of the verb argument is not a legal OAI-PMH verb', 'badVerb', $oai->endpoint_url(), 200
       );
     }
 

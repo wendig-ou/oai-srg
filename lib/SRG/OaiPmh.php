@@ -12,14 +12,14 @@
     public function verify_gateway() {
       if (!$this->repository) {
         $message = [
-          "the repository '{$url}' was not found (because it was not initiated",
+          "the repository '{$this->url}' was not found (because it was not initiated",
           "or bacause mediation has been terminated"
         ];
         throw new \SRG\Exception(join(' ', $message), 502);
       }
 
       if (!$this->repository->approved) {
-        $message = "the repository '{$url}' has not been approved for mediation (yet)";
+        $message = "the repository '{$this->url}' has not been approved for mediation (yet)";
         throw new \SRG\Exception($message, 503);
       }
 
