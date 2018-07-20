@@ -85,15 +85,11 @@ class OaiPmhCest
         $I->seeResponseContains('oai:perseus:Perseus:text:1999.02.0084');
         $I->dontSeeResponseContains('123456');
 
-        // $I->seeHttpHeader('content-type', 'text/xml;charset=UTF-8');
-        // $I->seeResponseIsXml();
-
         $body = $I->grabResponse();
         $doc = new DomDocument();
         $doc->loadXML($body);
         $ns = 'http://www.openarchives.org/OAI/2.0/';
         $token = $doc->getElementsByTagNameNS($ns, 'resumptionToken')->item(0)->nodeValue;
-        error_log($token);
         $I->sendGet('/oai-pmh/localhost:3002/repository.01.xml', [
             'verb' => 'ListIdentifiers',
             'resumptionToken' => trim($token)
