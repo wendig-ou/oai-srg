@@ -32,6 +32,14 @@
       return $date->format('Y-m-d H:i:s');
     }
 
+    public static function to_filter_date($date) {
+      if (! $date instanceof \DateTime) {
+        $date = new \DateTime($date);
+      }
+
+      return $date->format('Y-m-d'); 
+    }
+
     public static function to_oai_date($date) {
       if (! $date instanceof \DateTime) {
         $date = new \DateTime($date);

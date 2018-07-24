@@ -36,12 +36,12 @@
 
       if ($criteria['from']) {
         $where[] = 'modified_at >= ?';
-        $params[] = \SRG\Util::to_db_date($criteria['from']);
+        $params[] = \SRG\Util::to_filter_date($criteria['from']);
       }
 
       if ($criteria['until']) {
         $where[] = 'modified_at <= ?';
-        $params[] = \SRG\Util::to_db_date($criteria['until']);
+        $params[] = \SRG\Util::to_filter_date($criteria['until']);
       }
 
       $tn = static::$table_name;
