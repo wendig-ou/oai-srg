@@ -23,14 +23,7 @@
         throw new \SRG\Exception($message, 503);
       }
 
-      if (!\SRG\Gateway::import($this->url)) {
-        $message = [
-          "the repository '{$this->url}' is not available at its designated location",
-          "and/or there were errors interacting with it and/or the retrieved",
-          "data didn't pass verification"
-        ];
-        throw new \SRG\Exception(join(' ', $message), 504);
-      }
+      $this->freshness_test();
 
       # we reload the repository because the import might have changed it
       $this->repository = \SRG\Repository::find_by_url($this->url);
@@ -159,6 +152,44 @@
 
     public function endpoint_url() {
       return getenv('SRG_BASE_URL') . '/oai-pmh/' . \SRG\Util::reposify($this->url);
+    }
+
+    private function freshness_test() {
+      # prevent the freshness test during testing
+      if (APP_ENV === 'test') {
+        \SRG::log("APP_ENV === 'test' ... skipping freshness test for '{$this->url}'");
+        $repository = Repository::find_by_url($this->url);
+        if ($repository->verified) {
+          return TRUE;
+        }
+      }
+
+      \SRG::log("checkin freshness of '{$this->url}'");
+      $validator = \SRG\Gateway::validator_for($this->url);
+      if ($validator->verify()) {
+        $repository = $validator->repository();
+
+        if ($validator->modified()) {
+          \SRG::log("'{$this->url}' not fresh, importing ...");
+          $importer = new \SRG\Importer($validator->repository(), $validator->body);
+          $importer->import();
+        }
+
+        return TRUE;
+      } else {
+        \SRG::log("'{$this->url}' not valid, aborting ...");
+        if (in_array('received 404 Not Found')) {
+          $message = "the repository '{$this->url}' is not available at its designated location";
+          throw new \SRG\Exception($message, 504);
+        } else {
+          $message = [
+            "There were errors interacting with the repository and/or the",
+            "retrieved data didn't pass verification"
+          ];
+          throw new \SRG\Exception(join(' ', $message), 502);
+        }
+        return FALSE;
+      }
     }
   }
 ?>

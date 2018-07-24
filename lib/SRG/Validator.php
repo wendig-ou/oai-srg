@@ -29,7 +29,10 @@
           }
 
           if ($this->ok()) {
-            $this->has_last_modified();
+            if (!$this->has_last_modified()) {
+              $this->persist(['verified' => FALSE]);
+              return FALSE;
+            }
 
             if (!$this->is_utf8()) {
               $this->persist(['verified' => FALSE]);
@@ -231,7 +234,7 @@
       if ($this->last_modified) {
         return TRUE;
       } else {
-        $this->warnings[] = 'there was no Last-Modified header present in the response';
+        $this->errors[] = 'there was no Last-Modified header present in the response';
         return FALSE;
       }
     }

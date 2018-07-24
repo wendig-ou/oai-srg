@@ -68,14 +68,6 @@
     }
 
     public static function import($url) {
-      # prevent the freshness test during testing
-      if (APP_ENV === 'test') {
-        $repository = Repository::find_by_url($url);
-        if ($repository->verified) {
-          return TRUE;
-        }
-      }
-
       \SRG::log("importing repository '$url'");
       $validator = static::validator_for($url);
       if ($validator->verify()) {
@@ -91,11 +83,6 @@
         return FALSE;
       }
     }
-
-    // public static function OAI_PMH_identify($url) {
-    //   $repository = Repository::find($url);
-    //   return $repository->identify;
-    // }
 
     public static function validator_for($url) {
       return new \SRG\Validator($url);
