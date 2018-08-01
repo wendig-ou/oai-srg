@@ -33,6 +33,7 @@
     }
 
     public function save_state($verb, $state) {
+      \SRG\ResumptionToken::cleanup();
       return \SRG\ResumptionToken::save_state($this->id, $verb, $state);
     }
 
