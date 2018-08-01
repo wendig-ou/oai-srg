@@ -20,15 +20,24 @@
   
   <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <a class="navbar-brand" href="#" style="font-size: 2em;">
-        {% if organization and organization_logo_url %}
-          <img src="{{organization_logo_url}}" class="srg-logo d-block float-left mr-2" />
+      {% if organization_logo_url %}
+        <a class="navbar-brand mr-3">
+          <img src="{{organization_logo_url}}" class="srg-logo-secondary" />
+        </a>
+      {% endif %}
+      <a href="{{base_url}}" class="navbar-brand">
+        {% if organization %}
           {{organization}}<br />
           <small>OAI PMH Static Repository Gateway</small>
         {% else %}
           OAI PMH Static Repository Gateway
         {% endif %}
       </a>
+      {% if organization_logo_url_secondary %}
+        <a class="navbar-brand ml-3">
+          <img src="{{organization_logo_url_secondary}}" class="srg-logo-secondary" />
+        </a>
+      {% endif %}
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
           {% if user %}
@@ -46,8 +55,8 @@
       {% block content %}{% endblock %}
     </div>
 
-    <div class="p-5 mt-5 border-top text-center">
-      <p class="lead">
+    <div class="p-5 mt-5 border-top footer">
+      <p class="lead text-center">
         {% if organization and organization_url %}
           service provided by
           <br />
@@ -59,6 +68,10 @@
           implementation by
           <a href="https://wendig.io" target="_blank" rel="noopener">Wendig</a>
         </small>
+
+        {% if footer_logo_url %}
+          <img src="{{footer_logo_url}}" class="srg-logo mt-3" />
+        {% endif %}
       </p>
     </div>
 

@@ -95,6 +95,5 @@
       $this->delete_records();
       parent::delete();
     }
-
   }
 ?>

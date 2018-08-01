@@ -164,7 +164,7 @@
         }
       }
 
-      \SRG::log("checkin freshness of '{$this->url}'");
+      \SRG::log("checking freshness of '{$this->url}'");
       $validator = \SRG\Gateway::validator_for($this->url);
       if ($validator->verify()) {
         $repository = $validator->repository();

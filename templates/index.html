@@ -18,8 +18,23 @@
     Click on <strong>show examples</strong> on the respective row to reveal some
     requests that you could make about that particular repository. Request
     mediation for a <strong>new repository</strong> by clicking on the plus sign
-    on the right.
+    on the right. Click <strong>request termination</strong> to initiate
+    termination for your repository's mediation.
   </p>
+
+  {% if user %}
+    <p class="lead">
+      Also, you are logged in as admin and therefore have access to additional
+      functions: In the list below, you can see repositories that requested
+      mediation but have not been approved yet. If you plan to approve them, you
+      should click <strong>verify</strong> first to check repository compliance.
+      After that you may approve them by clicking <strong>approve</strong>. To
+      unilaterally terminate mediation for a repositry, click <strong>force
+      termination</strong> (the repository administrator will be notified by
+      email).
+    </p>
+  {% endif %}
+
 
   {% if repositories | length > 0 %}
     <table class="repositories table table-bordered table-striped">
@@ -72,7 +87,7 @@
             {% if repository.verified %}
               <small class="clear d-block">
                 <strong>{{repository.record_count()}}</strong> records,
-                last modified at: <strong>{{repository.modified_at}}</strong>
+                data last modified at: <strong>{{repository.modified_at}}</strong>
               </small>
             {% endif %}
 
@@ -106,27 +121,57 @@
 
               <small class="d-block">
                 OAI PMH <em>Identify</em><br />
-                <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=Identify</code>
+                <code>
+                  GET
+                  <a
+                    target="_blank"
+                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=Identify"
+                  >/oai-pmh/{{repository.url | reposify}}?verb=Identify</a>
+                </code>
               </small>
 
               <small class="d-block">
                 OAI PMH <em>List metadata formats</em><br />
-                <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListMetadataFormats</code>
+                <code>
+                  GET
+                  <a
+                    target="_blank"
+                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListMetadataFormats"
+                  >/oai-pmh/{{repository.url | reposify}}?verb=ListMetadataFormats</a>
+                </code>
               </small>
 
               <small class="d-block">
                 OAI PMH <em>List identifiers</em><br />
-                <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListIdentifiers</code>
+                <code>
+                  GET
+                  <a
+                    target="_blank"
+                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListIdentifiers&metadataPrefix=oai_dc"
+                  >/oai-pmh/{{repository.url | reposify}}?verb=ListIdentifiers&metadataPrefix=oai_dc</a>
+                </code>
               </small>
 
               <small class="d-block">
                 OAI PMH <em>List records</em><br />
-                <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListRecords&metadataPrefix=dc</code>
+                <code>
+                  GET
+                  <a
+                    target="_blank"
+                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListRecords&metadataPrefix=oai_dc"
+                  >/oai-pmh/{{repository.url | reposify}}?verb=ListRecords&metadataPrefix=oai_dc</a>
+                </code>
               </small>
 
               <small class="d-block">
                 OAI PMH <em>Get record</em><br />
-                <code>GET {{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&metadataPrefix=dc</code>
+                <code>
+                  GET
+                  <a
+                    target="_blank"
+                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&identifier=xxx&metadataPrefix=oai_dc"
+                  >/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&identifier=xxx&metadataPrefix=oai_dc</a>
+                </code>
               </small>
             </div>
           </td>
