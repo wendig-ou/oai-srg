@@ -91,7 +91,4 @@
   $app->post('/oai-pmh/{repository:.*}', '\SRG\Web:oai_pmh');
 
   $app->run();
-
-  # TODO: add indexes
-
 ?>
