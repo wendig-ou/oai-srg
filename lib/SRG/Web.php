@@ -175,6 +175,7 @@
       $twig_env->addGlobal('organization_logo_url_secondary', getenv('SRG_ORGANIZATION_LOGO_URL_SECONDARY'));
       $twig_env->addGlobal('favicon_url', getenv('SRG_FAVICON_URL'));
       $twig_env->addGlobal('footer_logo_url', getenv('SRG_FOOTER_LOGO_URL'));
+      $twig_env->addGlobal('admin_email', getenv('SRG_ADMIN_EMAIL'));
 
       $filter = new \Twig_SimpleFilter('reposify', function($s) {return \SRG\Util::reposify($s);});
       $this->container->view->getEnvironment()->addFilter($filter);
