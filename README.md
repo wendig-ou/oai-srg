@@ -16,6 +16,13 @@ max_execution_time = 300
 memory_limit = 256M
 ~~~
 
+### Known limitations
+
+* The gateway validates repository XML against the relevant schema. However,
+  this validation is limited to the parts covered by the Static-Repository and
+  OAI-PMH schemata. The payload (essentially `<metadata>` elements and their
+  contents) is not validated.
+
 ## Development
 
 To get started developing, first install VirtualBox, Vagrant and git. Then make
