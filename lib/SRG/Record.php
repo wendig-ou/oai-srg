@@ -47,9 +47,10 @@
       $tn = static::$table_name;
       $per_page = intval(getenv('SRG_PER_PAGE'));
       $offset = ($page - 1) * $per_page;
-      $query = "SELECT * FROM $tn WHERE " . join(' AND ', $where) . " LIMIT $per_page OFFSET $offset";
+      $query = "SELECT * FROM $tn WHERE " . join(' AND ', $where) . " ORDER BY id LIMIT $per_page OFFSET $offset";
       $count_query = "SELECT count(*) FROM $tn WHERE " . join(' AND ', $where);
 
+      \SRG::log('SQL params: ' . print_r($params, TRUE));
       \SRG::log('SQL: ' . $query);
       $s = \SRG::db()->prepare($query);
       $s->execute($params);

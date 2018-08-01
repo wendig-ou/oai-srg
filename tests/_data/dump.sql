@@ -42,8 +42,9 @@ CREATE TABLE `records` (
   `modified_at` date DEFAULT NULL,
   `payload` text,
   `prefix` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2706 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`),
+  KEY `findy` (`repository_id`,`identifier`,`prefix`,`modified_at`)
+) ENGINE=InnoDB AUTO_INCREMENT=5356 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,8 +72,9 @@ CREATE TABLE `repositories` (
   `version` varchar(10) DEFAULT NULL,
   `first_record_at` date DEFAULT NULL,
   `prefixes` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`),
+  KEY `findy` (`url`)
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,8 +91,9 @@ CREATE TABLE `resumption_tokens` (
   `state` text,
   `repository_id` int(11) DEFAULT NULL,
   `verb` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1;
+  PRIMARY KEY (`id`),
+  KEY `findy` (`repository_id`,`verb`,`identifier`,`created_at`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -102,4 +105,4 @@ CREATE TABLE `resumption_tokens` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-07-24  7:08:05
+-- Dump completed on 2018-08-01  4:08:07

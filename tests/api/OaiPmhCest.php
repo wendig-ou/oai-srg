@@ -95,8 +95,8 @@ class OaiPmhCest
             'resumptionToken' => trim($token)
         ]);
         $I->seeResponseCodeIs(200);
-        $I->dontSeeResponseContains('oai:arXiv:cs/0112017');
         $I->dontSeeResponseContains('oai:perseus:Perseus:text:1999.02.0084');
+        $I->dontSeeResponseContains('oai:arXiv:cs/0112017');
         $I->seeResponseContains('123456');
     }
 }
