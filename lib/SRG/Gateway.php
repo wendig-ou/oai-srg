@@ -46,6 +46,12 @@
       $repository->update(['approved' => TRUE]);
     }
 
+    public static function reject($url) {
+      \SRG::log("rejecting mediation for repository '$url' and removing repository");
+      $repository = Repository::find_by_url($url);
+      $repository->delete();
+    }
+
     public static function terminate($url) {
       \SRG::log("verifying termination for repository '$url'");
       $repository = Repository::find_by_url($url);
@@ -59,6 +65,7 @@
       \SRG::log("terminating mediation for repository '$url'");
       $repository = Repository::find_by_url($url);
       $repository->delete();
+      \SRG\Mail::notify_unilateral_termination($repository);
     }
 
     public static function verify($url) {

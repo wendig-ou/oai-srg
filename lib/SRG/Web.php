@@ -58,6 +58,11 @@
           Gateway::approve($url);
         }
 
+        if (isset($params['reject'])) {
+          $url = trim($params['reject']);
+          Gateway::reject($url);
+        }
+
         if (isset($params['import'])) {
           $url = trim($params['import']);
           Gateway::import($url);
@@ -160,6 +165,7 @@
 
     protected function extend() {
       $twig_env = $this->container->view->getEnvironment();
+      $twig_env->addGlobal('bootstrap_theme', getenv('SRG_BOOTSTRAP_THEME'));
       $twig_env->addGlobal('base_url', getenv('SRG_BASE_URL'));
       $twig_env->addGlobal('user', \SRG::auth()->user());
       $twig_env->addGlobal('now', \SRG\Util::to_oai_date('now'));

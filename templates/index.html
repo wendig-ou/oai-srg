@@ -13,7 +13,7 @@
     {{ block('title') }}
   </h3>
 
-  <p class="lead mb-4 pr-5">
+  <p class="lead mt-5 mb-4 pr-5">
     These are all repositories available for mediation by this gateway.
     Click on <strong>show examples</strong> on the respective row to reveal some
     requests that you could make about that particular repository. Request
@@ -28,13 +28,18 @@
       functions: In the list below, you can see repositories that requested
       mediation but have not been approved yet. If you plan to approve them, you
       should click <strong>verify</strong> first to check repository compliance.
-      After that you may approve them by clicking <strong>approve</strong>. To
-      unilaterally terminate mediation for a repositry, click <strong>force
-      termination</strong> (the repository administrator will be notified by
-      email).
+      This process will parse potentially large XML files and it can take some
+      time. If successful, additional statistics for this repository will be
+      listed. Any verification errors can be shown by clicking
+      <strong>verification errors</strong>. You may approve repositories by
+      clicking <strong>approve</strong>, which activates the OAI PMH gateway
+      interface for it. The <strong>reject</strong> button will simply remove
+      the repository from the system (without notification to the repository
+      administrator). To unilaterally terminate mediation for a repository,
+      click <strong>force termination</strong> (the repository administrator
+      will be notified by email).
     </p>
   {% endif %}
-
 
   {% if repositories | length > 0 %}
     <table class="repositories table table-bordered table-striped">
@@ -198,9 +203,14 @@
           </td>
           <td class="text-right">
             {% if user %}
-              {% if not repository.approved %}
+              {% if not repository.approved and repository.verified %}
                 <a class="d-block" href="{{base_url}}/gateway?approve={{repository.url}}">
                   approve <i class="fa fa-thumbs-up"></i>
+                </a>
+              {% endif %}
+              {% if not repository.approved or not repository.verified %}
+                <a class="d-block" href="{{base_url}}/gateway?reject={{repository.url}}">
+                  reject <i class="fa fa-thumbs-down"></i>
                 </a>
               {% endif %}
               <a class="d-block" href="{{base_url}}/gateway?import={{repository.url}}">
