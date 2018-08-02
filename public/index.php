@@ -15,9 +15,6 @@
   require __DIR__ . '/../vendor/autoload.php';
   require __DIR__ . '/../lib/SRG.php';
 
-  // phpinfo();
-  // return false;
-
   $app = new \Slim\App([
     'settings' => [
       'debug' => getenv('SRG_DEBUG') === 'true',
@@ -83,7 +80,7 @@
   $app->get('/logout', '\SRG\Web:logout');
   $app->get('/gateway/new', '\SRG\Web:form');
 
-  # the gateway routes (initiate, approve, terminate, validate)
+  # the gateway routes (initiate, approve, terminate etc)
   $app->get('/gateway', '\SRG\Web:gateway');
 
   # the oai pmh routes (Identify, ListRecords etc)
