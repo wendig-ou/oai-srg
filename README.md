@@ -1,6 +1,19 @@
 ## Production (how to use)
 
 * checkout the repo to within apache's DocumentRoot
+* if you are using Apache Alias directives to map the url to a filesystem path,
+  older systems and some deployments on Windows might require additional
+  configuration for the matching filesystem path:
+  ```
+  <Directory /path/to/app>
+    ...
+    RewriteOptions MergeBase
+    RewriteBase /sub/url-path/to/app
+  </Directory>
+  ```
+  See the
+  [apache documentation](https://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase)
+  for details.
 * copy .env.sample to .env and make changes within the file to reflect your
   deployment. These are just environment variables, you may also configure them
   with your web-server's environment, e.g. with Apache's SetEnv
