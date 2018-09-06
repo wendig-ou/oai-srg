@@ -1,9 +1,6 @@
-unless Vagrant.has_plugin?("vagrant-vbguest")
-  STDERR.puts 'vbguest plugin is not installed, please install it (vargant plugin install vagrant-vbguest)'
-  exit 1
-end
-
 Vagrant.configure("2") do |base|
+  base.vagrant.plugins = ["vagrant-vbguest"]
+
   base.vm.synced_folder '.', '/vagrant', type: 'virtualbox'
   base.vm.network :forwarded_port, host: 3000, guest: 3000, host_ip: '127.0.0.1'
   base.vm.network :forwarded_port, host: 3306, guest: 3306, host_ip: '127.0.0.1'

@@ -367,6 +367,8 @@
         'warnings' => join("|", $this->warnings)
       ]);
 
+      $values['verified'] = ($values['verified'] === TRUE ? 1 : 0);
+
       $this->repository()->update($values);
     }
 

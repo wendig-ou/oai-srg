@@ -92,7 +92,6 @@
       $update_values[] = $this->url;
       $tn = static::$table_name;
       $s = \SRG::db()->prepare("UPDATE $tn SET $setters WHERE url LIKE ?");
-      // $values[0] = 1;
       $s->execute($update_values);
     }
 

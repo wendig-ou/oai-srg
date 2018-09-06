@@ -55,6 +55,7 @@
         );
         self::$db = new PDO($dsn, getenv('SRG_DB_USERNAME'), getenv('SRG_DB_PASSWORD'));
         self::$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        self::$db->exec("SET SESSION sql_mode='STRICT_TRANS_TABLES'");
         self::ensureDb();
       }
 
