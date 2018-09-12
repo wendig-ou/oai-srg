@@ -1,4 +1,16 @@
-## Production (how to use)
+This is an implementation of the [OAI Static Repository Gateway Specification](
+http://www.openarchives.org/OAI/2.0/guidelines-static-repository.htm). Its
+OAI-PMH endpoints pass the [data provider validation](
+https://www.openarchives.org/Register/ValidateSite).
+
+**Known limitations**
+
+* The gateway validates repository XML against the relevant schema. However,
+  this validation is limited to the parts covered by the Static-Repository and
+  OAI-PMH schemata. The payload (essentially `<metadata>` elements and their
+  contents) is not validated.
+
+## Installation
 
 * checkout the repo to within apache's DocumentRoot
 * if you are using Apache Alias directives to map the url to a filesystem path,
@@ -28,13 +40,6 @@ sets, you might have to change some resource limits for php, e.g.
 max_execution_time = 300
 memory_limit = 256M
 ~~~
-
-### Known limitations
-
-* The gateway validates repository XML against the relevant schema. However,
-  this validation is limited to the parts covered by the Static-Repository and
-  OAI-PMH schemata. The payload (essentially `<metadata>` elements and their
-  contents) is not validated.
 
 ## Development
 
