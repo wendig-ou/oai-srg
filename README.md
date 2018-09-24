@@ -41,6 +41,16 @@ max_execution_time = 300
 memory_limit = 256M
 ~~~
 
+## Updates
+
+Make sure to run the migrations when updating the code so that changes to the
+database are propagated to your production system. This is done like so:
+
+~~~
+cd /path/to/app
+php bin/update.php
+~~~
+
 ## Development
 
 To get started developing, first install VirtualBox, Vagrant and git. Then make
