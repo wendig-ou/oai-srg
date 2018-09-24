@@ -40,7 +40,7 @@ CREATE TABLE `records` (
   `repository_id` int(11) DEFAULT NULL,
   `identifier` varchar(255) DEFAULT NULL,
   `modified_at` date DEFAULT NULL,
-  `payload` text,
+  `payload` longtext,
   `prefix` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `findy` (`repository_id`,`identifier`,`prefix`,`modified_at`)
@@ -105,4 +105,4 @@ CREATE TABLE `resumption_tokens` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-08-01  6:53:00
+-- Dump completed on 2018-09-24 16:32:50
