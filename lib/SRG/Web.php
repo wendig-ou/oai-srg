@@ -179,6 +179,11 @@
 
       $filter = new \Twig_SimpleFilter('reposify', function($s) {return \SRG\Util::reposify($s);});
       $this->container->view->getEnvironment()->addFilter($filter);
+
+      $filter = new \Twig_SimpleFilter('preferred_prefix', function($repository) {
+        return \SRG\Util::preferred_prefix($repository);
+      });
+      $this->container->view->getEnvironment()->addFilter($filter);
     }
   }
 ?>

@@ -101,5 +101,19 @@
         return $default;
       }
     }
+
+    public static function preferred_prefix($repository) {
+      if (getenv('SRG_PREFER_ALTERNATE_PREFIX') === 'true') {
+        error_log('xxx:');
+        error_log(print_r($repository->prefixes, TRUE));
+        foreach (explode(',', $repository->prefixes) as $prefix) {
+          if ($prefix !== 'oai_dc') {
+            return $prefix;
+          }
+        }
+      }
+
+      return 'oai_dc';
+    }
   }
 ?>
