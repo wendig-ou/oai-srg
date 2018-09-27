@@ -13,6 +13,7 @@
     <form action="{{base_url}}/login" method="POST">
       <div class="form-group">
         <label for="password">Please enter the admin password</label>
+        <input name="username" type="hidden" value="admin" />
         <input
           class="form-control {% if password_mismatch %}is-invalid{% endif %}"
           type="password"
