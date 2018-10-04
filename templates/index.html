@@ -154,8 +154,8 @@
                   GET
                   <a
                     target="_blank"
-                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListIdentifiers&metadataPrefix=oai_dc"
-                  >/oai-pmh/{{repository.url | reposify}}?verb=ListIdentifiers&metadataPrefix=oai_dc</a>
+                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=ListIdentifiers&metadataPrefix={{repository | preferred_prefix}}"
+                  >/oai-pmh/{{repository.url | reposify}}?verb=ListIdentifiers&metadataPrefix={{repository | preferred_prefix}}</a>
                 </code>
               </small>
 
@@ -176,8 +176,8 @@
                   GET
                   <a
                     target="_blank"
-                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&identifier=xxx&metadataPrefix=oai_dc"
-                  >/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&identifier=xxx&metadataPrefix=oai_dc</a>
+                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&identifier=xxx&metadataPrefix={{repository | preferred_prefix}}"
+                  >/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&identifier=xxx&metadataPrefix={{repository | preferred_prefix}}</a>
                 </code>
               </small>
             </div>
