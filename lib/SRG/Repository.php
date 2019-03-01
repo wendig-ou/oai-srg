@@ -83,6 +83,10 @@
       return \SRG\Record::find_by_criteria($this->id, $prefix, $page, $criteria);
     }
 
+    public function first_record() {
+      return \SRG\Record::find_first_by_repository_id($this->id);
+    }
+
     public function delete_records() {
       \SRG\Record::delete_by_repository_id($this->id);
     }

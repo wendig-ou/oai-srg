@@ -68,5 +68,19 @@
     public static function delete_by_repository_id($id) {
       return static::delete_by('repository_id', $id);
     }
+
+    public static function find_first_by_repository_id($id) {
+      $tn = static::$table_name;
+      $query = "SELECT * FROM $tn WHERE repository_id = ? LIMIT 1";
+      $params = [$id];
+      \SRG::log('SQL params: ' . print_r($params, TRUE));
+      \SRG::log('SQL: ' . $query);
+      $s = \SRG::db()->prepare($query);
+      $s->execute($params);
+      $s->setFetchMode(\PDO::FETCH_CLASS, get_called_class());
+      $records = $s->fetchAll();
+      
+      return $records[0];
+    }
   }
 ?>

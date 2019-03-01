@@ -176,8 +176,8 @@
                   GET
                   <a
                     target="_blank"
-                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&identifier=xxx&metadataPrefix={{repository | preferred_prefix}}"
-                  >/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&identifier=xxx&metadataPrefix={{repository | preferred_prefix}}</a>
+                    href="{{base_url}}/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&identifier={{repository | sample | identifier}}&metadataPrefix={{repository | sample | prefix}}"
+                  >/oai-pmh/{{repository.url | reposify}}?verb=GetRecord&identifier={{repository | sample | identifier}}&metadataPrefix={{repository | sample | prefix}}</a>
                 </code>
               </small>
             </div>

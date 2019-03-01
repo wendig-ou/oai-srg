@@ -184,6 +184,23 @@
         return \SRG\Util::preferred_prefix($repository);
       });
       $this->container->view->getEnvironment()->addFilter($filter);
+
+      $filter = new \Twig_SimpleFilter('sample', function($repository) {
+        return $repository->first_record();
+      });
+      $this->container->view->getEnvironment()->addFilter($filter);
+
+      $filter = new \Twig_SimpleFilter('identifier', function($record) {
+        if ($record) {return $record->identifier;}
+        return 'xxx';
+      });
+      $this->container->view->getEnvironment()->addFilter($filter);
+
+      $filter = new \Twig_SimpleFilter('prefix', function($record) {
+        if ($record) {return $record->prefix;}
+        return 'oai_dc';
+      });
+      $this->container->view->getEnvironment()->addFilter($filter);
     }
   }
 ?>
