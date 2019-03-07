@@ -25,6 +25,8 @@
 
       $this->repository->delete_records();
       foreach ($data['data']['records'] as $record) {
+        // \SRG::log('importing identifier: ' . print_r($record['identifier'], TRUE));
+        
         $this->repository->create_record([
           'prefix' => $record['prefix'],
           'identifier' => $record['identifier'],

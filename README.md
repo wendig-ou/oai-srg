@@ -37,8 +37,16 @@ Depending on your environment, server performance and the size of your data
 sets, you might have to change some resource limits for php, e.g.
 
 ~~~
-max_execution_time = 300
+max_execution_time = 1800
+max_input_time = 1800
 memory_limit = 256M
+~~~
+
+and for mysql, e.g.
+
+~~~
+[mysqld]
+max_allowed_packet = 64M
 ~~~
 
 ## Updates

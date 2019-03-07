@@ -79,7 +79,7 @@
       $s = self::db()->query('SHOW DATABASES');
       $names = $s->fetchAll(PDO::FETCH_COLUMN);
       if (!in_array($name, $names)) {
-        self::db()->query('CREATE DATABASE ' . $name);
+        self::db()->query('CREATE DATABASE ' . $name . ' DEFAULT CHARACTER SET = utf8');
       }
 
       self::db()->query('USE ' . $name);
